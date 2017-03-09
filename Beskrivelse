@@ -1,0 +1,37 @@
+Fra bildet lagrer vi:
+	- 2d array av alle pixlene
+	
+Genotype:
+	- For hvert segment har vi ett unordred_set av pixel kordinater som inngår i det settet.
+	
+	
+Crossover:
+	- Sorter alle segmentene hos de to foreldrene utifra fitness.
+	- Velg den beste, slett pixlene i den fra de etterfølgende segmentene.
+	- Gjennta for neste segment.
+	- Slett tomme segmenter.
+	- Dette er nå barnet.
+	
+Mutation:
+	- Merge: 
+		- Mulighet 1: Velg ett tilfeldig segment, merge med den naboen som gir størst forbedring. 
+		- (Mulighet 2: Merge de to segmentene som gir størst forbedring.) (funker dårlig tror jeg meg split og init)
+	- Split: 
+		- Split opp segmentet i ett tilfeldig antall undersegmenter
+			- Enten del opp i en piksel per segment
+			- Om det har for lang kjøretid: Finn en annen måte å dele opp på. 
+		- Kjør merge blandt undersegmentene til vi har 2 igjen. 
+
+Initial poppulation: 
+	- Kjør merge til ønsket antall segmenter nåes (ønsket antall bør være tilfeldig innenfor ett gitt intervall).
+	
+Fitness:
+	- For hvert segment lagre de tre fitnessene
+	- Løsningen har summen av fitnessene. (fitnes 2 og 3 får dobbel så høy verdi, men det gjør ikke noe)
+
+Finne kantpikslene i ett segment:
+	- For hver piksel, sjekk om en av nabopikslene ikke er i det samme segmentet. Da er den en kant. Om vi skal beregne fitness, 
+	legg da til den vektkanten. 
+	Hvis vi skal finne nabosegmenter
+	- De pikslene som ikke er i segmentet skrives ned sånn at de kan brukes for å finne nabosegmenter.
+	- Kjør finn kantpiksler, finn hvilket segment "pikslene som ikke er i segmentet" tillhører. 
