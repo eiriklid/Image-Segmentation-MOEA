@@ -1,6 +1,6 @@
 Fra bildet lagrer vi:
 	- 2d array av alle pixlene
-	- 2d array med forskjellen over alle kantene.
+	- 2d array med forskjellen over alle kantene. (så vi slipper å regne de ut hver gang)
 	
 Genotype:
 	- For hvert segment har vi ett unordred_set av pixel kordinater som inngår i det settet.
@@ -15,18 +15,24 @@ Crossover:
 	
 Mutation:
 	- Merge: 
-		- Mulighet 1: Velg ett tilfeldig segment, merge med den naboen som gir størst forbedring. (Hvordan finne naboer???)
-		- MUlighet 2: Merge de to segmentene som gir størst forbedring. 
+		- Mulighet 1: Velg ett tilfeldig segment, merge med den naboen som gir størst forbedring. 
+		- (Mulighet 2: Merge de to segmentene som gir størst forbedring.) (funker dårlig tror jeg meg split og init)
 	- Split: 
-		- Bygger opp en "vei" av kanter. 
-		- Begynn med den høyeste kanten.
-		- Se på kantene som er på enden av veien. 
-		- Legg til den beste kanten.
-		- Når en kant går inn i utkanten av segmenten er den siden av veien ferdig.
-		- Fortsett til begge sidene er ferdig. Eller vi har loopet. Om vi har loopet fjern aller kanter som ikke er en del av loopen.
-		- Split segmenten lang kanten.
-		
-		-Split funker ikke helt så bra, problemer med doughnuts. Tenk ut en ny måte
+		- Split opp segmentet i ett tilfeldig antall undersegmenter
+			- Enten del opp i en piksel per segment
+			- Om det har for lang kjøretid: Finn en annen måte å dele opp på. 
+		- Kjør merge blandt undersegmentene til vi har 2 igjen. 
 
 Initial poppulation: 
-	- Kjør split på bildet, fortsett på litt tilfeldig utvalg av segmenter et litt tilfeldig antall ganger. 
+	- Kjør merge til ønsket antall segmenter nåes (ønsket antall bør være tilfeldig innenfor ett gitt intervall).
+	
+Fitness:
+	- For hvert segment lagre de tre fitnessene
+	- Løsningen har summen av fitnessene. (fitnes 2 og 3 får dobbel så høy verdi, men det gjør ikke noe)
+
+Finne kantpikslene i ett segment:
+	- For hver piksel, sjekk om en av nabopikslene ikke er i det samme segmentet. Da er den en kant. Om vi skal beregne fitness, 
+	legg da til den vektkanten. 
+	Hvis vi skal finne nabosegmenter
+	- De pikslene som ikke er i segmentet skrives ned sånn at de kan brukes for å finne nabosegmenter.
+	- Kjør finn kantpiksler, finn hvilket segment "pikslene som ikke er i segmentet" tillhører. 
