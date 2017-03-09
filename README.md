@@ -1,4 +1,4 @@
 # Image-Segmentation-MOEA
 
 TODO:
--Get image
+	(-) Get image
