@@ -1,0 +1,32 @@
+Fra bildet lagrer vi:
+	- 2d array av alle pixlene
+	- 2d array med forskjellen over alle kantene.
+	
+Genotype:
+	- For hvert segment har vi ett unordred_set av pixel kordinater som inngår i det settet.
+	
+	
+Crossover:
+	- Sorter alle segmentene hos de to foreldrene utifra fitness.
+	- Velg den beste, slett pixlene i den fra de etterfølgende segmentene.
+	- Gjennta for neste segment.
+	- Slett tomme segmenter.
+	- Dette er nå barnet.
+	
+Mutation:
+	- Merge: 
+		- Mulighet 1: Velg ett tilfeldig segment, merge med den naboen som gir størst forbedring. (Hvordan finne naboer???)
+		- MUlighet 2: Merge de to segmentene som gir størst forbedring. 
+	- Split: 
+		- Bygger opp en "vei" av kanter. 
+		- Begynn med den høyeste kanten.
+		- Se på kantene som er på enden av veien. 
+		- Legg til den beste kanten.
+		- Når en kant går inn i utkanten av segmenten er den siden av veien ferdig.
+		- Fortsett til begge sidene er ferdig. Eller vi har loopet. Om vi har loopet fjern aller kanter som ikke er en del av loopen.
+		- Split segmenten lang kanten.
+		
+		-Split funker ikke helt så bra, problemer med doughnuts. Tenk ut en ny måte
+
+Initial poppulation: 
+	- Kjør split på bildet, fortsett på litt tilfeldig utvalg av segmenter et litt tilfeldig antall ganger. 
