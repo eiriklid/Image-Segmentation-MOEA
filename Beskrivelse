@@ -1,6 +1,5 @@
 Fra bildet lagrer vi:
 	- 2d array av alle pixlene
-	- 2d array med forskjellen over alle kantene. (så vi slipper å regne de ut hver gang)
 	
 Genotype:
 	- For hvert segment har vi ett unordred_set av pixel kordinater som inngår i det settet.
