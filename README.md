@@ -1,4 +1,7 @@
 # Image-Segmentation-MOEA
 
 TODO:
-	(-) Get image
+	- Få tak i RGB for piksel
+	- RGB-Distanse mellom piksler
+	- Putte piksel i segment-set(Lage genotype)
+	- Fitness for segment
