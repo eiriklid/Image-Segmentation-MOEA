@@ -40,11 +40,6 @@ int main(int argc, char** argv)
 
 	cv::Vec4d d = a - b;  
 	double distance = cv::norm(d);
-	
-
-	Point2i a = Point2i(1, 1);
-	Point2i b = Point2i(2, 2);
-	Point2i c = Point2i(3, 3);
 	*/
 
 	Segment test_seg;
@@ -55,6 +50,11 @@ int main(int argc, char** argv)
 	test_seg.insert_pixel(2, 1);
 
 	test_seg.erase_pixel(1, 2);
+	test_seg.erase_pixel(2, 1);
+	test_seg.erase_pixel(3, 2); //Nothing happens
+
+	Point2i c = Point2i(3, 3);
+	test_seg.insert_pixel(c);
 
 	test_seg.print();
 

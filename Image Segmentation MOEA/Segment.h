@@ -17,13 +17,15 @@ typedef std::unordered_set <cv::Point2i> points_set_t;
 class Segment
 {
 private:
-	points_set_t points;
+	points_set_t points; //public for crossover?
 
 public:
 	//Segment();
 	//~Segment();
 	void insert_pixel(int x, int y);
+	void insert_pixel(cv::Point2d a);
 	void erase_pixel(int x, int y); //return if found?
+	void erase_pixel(cv::Point2d a);
 	void print();
 
 };
