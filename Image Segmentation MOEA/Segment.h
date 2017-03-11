@@ -23,11 +23,10 @@ public:
 	//Segment();
 	//~Segment();
 	void insert_pixel(int x, int y);
-	void insert_pixel(cv::Point2d a);
+	void insert_pixel(cv::Point2i pixel);
 	void erase_pixel(int x, int y); //return if found?
-	void erase_pixel(cv::Point2d a);
+	void erase_pixel(cv::Point2i pixel);
 	void print();
-
 };
 
 

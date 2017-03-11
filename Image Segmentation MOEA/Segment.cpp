@@ -8,16 +8,16 @@
 void Segment::insert_pixel(int x, int y) {
 	this->points.insert(cv::Point2i(x, y));
 }
-void Segment::insert_pixel(cv::Point2d a) {
-	this->points.insert(a);
+void Segment::insert_pixel(cv::Point2i pixel) {
+	this->points.insert(pixel);
 }
 
 
 void Segment::erase_pixel(int x, int y) {
 	this->points.erase(cv::Point2i(x, y));
 }
-void Segment::erase_pixel(cv::Point2d a) {
-	this->points.erase(a);
+void Segment::erase_pixel(cv::Point2i pixel) {
+	this->points.erase(pixel);
 }
 
 void Segment::print() {
