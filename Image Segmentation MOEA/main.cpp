@@ -10,9 +10,8 @@
 using namespace cv;
 using namespace std;
 
-
-
-
+double color_distance(cv::Scalar a, cv::Scalar b);
+cv::Point2i* neighbours(cv::Point2i pixel, cv::Mat& image);
 
 int main(int argc, char** argv)
 {
@@ -37,11 +36,8 @@ int main(int argc, char** argv)
 	/*
 	cv::Scalar a(200, 200, 200); // color 1
 	cv::Scalar b(100, 100, 100); // color 2
-
-	cv::Vec4d d = a - b;  
-	double distance = cv::norm(d);
+	cout << color_distance(a, b) << endl;
 	*/
-
 	Segment test_seg;
 
 	test_seg.insert_pixel(1, 1);
@@ -53,10 +49,16 @@ int main(int argc, char** argv)
 	test_seg.erase_pixel(2, 1);
 	test_seg.erase_pixel(3, 2); //Nothing happens
 
-	Point2i c = Point2i(3, 3);
+	Point2i c = Point2i(480, 1);
 	test_seg.insert_pixel(c);
 
-	test_seg.print();
+	Point2i* ne = neighbours(c, image);
+
+
+	//test_seg.print();
+	for (int i = 0; i < 4; i++) {
+		cout << ne[i] << "\t";
+	}
 
 	waitKey(0);                                          // Wait for a keystroke in the window
 
@@ -64,4 +66,22 @@ int main(int argc, char** argv)
 	
 
 	return 0;
+}
+
+
+double color_distance(cv::Scalar a, cv::Scalar b) {
+	cv::Vec4d d = a - b;
+	return cv::norm(d);
+}
+
+cv::Point2i* neighbours(cv::Point2i pixel, cv::Mat& image) {
+	cv::Point2i* neighbour_array = new cv::Point2i [4];
+	
+	neighbour_array[0] = ((pixel.x > 0) ? (cv::Point2i(pixel.x - 1, pixel.y)) : (cv::Point2i(-1,-1)));
+	neighbour_array[1] = ((pixel.y > 0) ? (cv::Point2i(pixel.x, pixel.y - 1)) : (cv::Point2i(-1, -1)));
+	neighbour_array[2] = ((pixel.x < image.cols) ? (cv::Point2i(pixel.x + 1, pixel.y)) : (cv::Point2i(-1, -1))); //May need to be one step smaler
+	neighbour_array[3] = ((pixel.y < image.rows) ? (cv::Point2i(pixel.x, pixel.y + 1)) : (cv::Point2i(-1, -1))); //--------------""--------------
+
+	return neighbour_array;
+	
 }
