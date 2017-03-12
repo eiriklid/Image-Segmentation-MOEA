@@ -47,7 +47,7 @@ int main(int argc, char** argv)
 
 	test_seg.erase_pixel(1, 2);
 	test_seg.erase_pixel(2, 1);
-	test_seg.erase_pixel(3, 2); //Nothing happens
+	test_seg.erase_pixel(3, 2); //Nothing happens, (3,2) not in test_seg
 
 	Point2i c = Point2i(480, 1);
 	test_seg.insert_pixel(c);
@@ -61,9 +61,6 @@ int main(int argc, char** argv)
 	}
 
 	waitKey(0);                                          // Wait for a keystroke in the window
-
-	
-	
 
 	return 0;
 }

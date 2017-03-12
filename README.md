@@ -10,4 +10,5 @@ TODO:
 			- Max/Min for each row?
 			- 2D-Array with Max/Min?
 		- [x] For pixel find neighbour pixels
-			-struct with directions of neighbour
+			-struct with directions of neighbour?
+			-dynamic?
