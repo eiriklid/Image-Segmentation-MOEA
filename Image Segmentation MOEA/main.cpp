@@ -40,25 +40,35 @@ int main(int argc, char** argv)
 	*/
 	Segment test_seg;
 
-	test_seg.insert_pixel(1, 1);
-	test_seg.insert_pixel(1, 2);
-	test_seg.insert_pixel(2, 2);
-	test_seg.insert_pixel(2, 1);
+	for (int i = 0; i < 20; i++) {
+		for (int j = 0; j < 30; j++) {
+			Point2i c = Point2i(i,j);
+			test_seg.insert_pixel(c);
+			image.at<Vec3b>(c)[0] = 0;
+			image.at<Vec3b>(c)[1] = 255;
+			image.at<Vec3b>(c)[2] = 0;
 
-	test_seg.erase_pixel(1, 2);
-	test_seg.erase_pixel(2, 1);
-	test_seg.erase_pixel(3, 2); //Nothing happens, (3,2) not in test_seg
 
-	Point2i c = Point2i(480, 1);
-	test_seg.insert_pixel(c);
+		}
+	}
+	test_seg.print();
 
+	/*
+	Vec3b s = image.at<Vec3b>(c.x,c.y);
+	cout << s << image.cols << endl;
 	Point2i* ne = neighbours(c, image);
 
+	
 
-	//test_seg.print();
 	for (int i = 0; i < 4; i++) {
 		cout << ne[i] << "\t";
 	}
+
+	*/
+
+	namedWindow("Green window", WINDOW_AUTOSIZE);// Create a window for display.
+	imshow("Green window", image);                   // Show our image inside it.
+
 
 	waitKey(0);                                          // Wait for a keystroke in the window
 
