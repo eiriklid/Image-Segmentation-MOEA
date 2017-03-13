@@ -10,7 +10,7 @@
 using namespace cv;
 using namespace std;
 
-double color_distance(cv::Scalar a, cv::Scalar b);
+double color_distance(cv::Vec3b a, cv::Vec3b b);
 cv::Point2i* neighbours(cv::Point2i pixel, cv::Mat& image);
 
 int main(int argc, char** argv)
@@ -33,11 +33,12 @@ int main(int argc, char** argv)
 	namedWindow("Display window", WINDOW_AUTOSIZE);// Create a window for display.
 	imshow("Display window", image);                   // Show our image inside it.
 
-	/*
-	cv::Scalar a(200, 200, 200); // color 1
-	cv::Scalar b(100, 100, 100); // color 2
+	
+	cv::Vec3d a(200, 200, 200); // color 1
+	cv::Vec3d b(100, 100, 100); // color 2
 	cout << color_distance(a, b) << endl;
-	*/
+	
+
 	Segment test_seg;
 
 	for (int i = 0; i < 20; i++) {
@@ -76,8 +77,8 @@ int main(int argc, char** argv)
 }
 
 
-double color_distance(cv::Scalar a, cv::Scalar b) {
-	cv::Vec4d d = a - b;
+double color_distance(cv::Vec3b a, cv::Vec3b b) {
+	cv::Vec3b d = a - b;
 	return cv::norm(d);
 }
 
@@ -86,8 +87,8 @@ cv::Point2i* neighbours(cv::Point2i pixel, cv::Mat& image) {
 	
 	neighbour_array[0] = ((pixel.x > 0) ? (cv::Point2i(pixel.x - 1, pixel.y)) : (cv::Point2i(-1,-1)));
 	neighbour_array[1] = ((pixel.y > 0) ? (cv::Point2i(pixel.x, pixel.y - 1)) : (cv::Point2i(-1, -1)));
-	neighbour_array[2] = ((pixel.x < image.cols) ? (cv::Point2i(pixel.x + 1, pixel.y)) : (cv::Point2i(-1, -1))); //May need to be one step smaler
-	neighbour_array[3] = ((pixel.y < image.rows) ? (cv::Point2i(pixel.x, pixel.y + 1)) : (cv::Point2i(-1, -1))); //--------------""--------------
+	neighbour_array[2] = ((pixel.x < image.cols - 1) ? (cv::Point2i(pixel.x + 1, pixel.y)) : (cv::Point2i(-1, -1))); 
+	neighbour_array[3] = ((pixel.y < image.rows - 1) ? (cv::Point2i(pixel.x, pixel.y + 1)) : (cv::Point2i(-1, -1))); 
 
 	return neighbour_array;
 	

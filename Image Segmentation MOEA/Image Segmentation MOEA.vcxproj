@@ -119,6 +119,7 @@
     <ClCompile Include="Segment.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\Beskrivelse" />
     <None Include="..\README.md" />
   </ItemGroup>
   <ItemGroup>
