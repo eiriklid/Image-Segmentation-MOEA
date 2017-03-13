@@ -9,8 +9,12 @@ Crossover:
 	- Sorter alle segmentene hos de to foreldrene utifra fitness.
 	- Velg den beste, slett pixlene i den fra de etterfølgende segmentene.
 	- Gjennta for neste segment.
-	- Slett tomme segmenter.
-	- Dette er nå barnet.
+	- For hvert segment som er endret (marker om de ble endret)
+		- Velg en tilfeldig piksel putt denne i ett nytt segment, overfør alle nabone til dette pikselet, 
+		og alle naobene til nabone rekursivt. 
+		Når det ikke lengre er noen naboer fra det originale settet er dette nye settet laget
+		- Gjenta til alle pikslene fra det originale settet er oppbrukt.
+	- Slett alle tomme sett. 
 	
 Mutation:
 	- Merge: 
