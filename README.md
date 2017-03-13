@@ -12,3 +12,16 @@ TODO:
 		- [x] For pixel find neighbour pixels
 			-struct with directions of neighbour?
 			-dynamic?
+	- [] Inserting pixel 
+		- Check if pixel connects to segment
+		- Uppdate min/max or edges list
+	- [] Erasing pixel
+		- Check if pixel makes hole in segment?
+			- Make inner rim
+		- Check if pixel is min/max?
+			- If both Min & Max, check neighbours to detect split. (or Check that the outer rim rows is continious)
+	
+	- [] Detect splits
+		- check for erase inside outer rim
+
+	
