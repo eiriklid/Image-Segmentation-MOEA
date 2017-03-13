@@ -19,9 +19,10 @@ class Segment
 {
 private:
 	points_set_t points; //public for crossover?
+	cv::Mat* image_ptr;
 
 public:
-	//Segment();
+	Segment(cv::Mat* image_ptr);
 	//~Segment();
 	void insert_pixel(int x, int y);
 	void insert_pixel(cv::Point2i pixel);
@@ -29,6 +30,8 @@ public:
 	void erase_pixel(cv::Point2i pixel);
 	void print();
 	points_set_t get_points();
+	cv::Vec3d average();
+
 
 
 };

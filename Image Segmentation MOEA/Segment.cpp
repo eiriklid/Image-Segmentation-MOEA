@@ -4,6 +4,11 @@
 #include <iostream>
 
 
+Segment::Segment(cv::Mat* image_ptr) {
+	this->image_ptr = image_ptr;
+}
+
+
 
 void Segment::insert_pixel(int x, int y) {
 	this->points.insert(cv::Point2i(x, y));
@@ -28,4 +33,16 @@ void Segment::print() {
 
 points_set_t Segment::get_points() {
 	return this->points;
+}
+
+cv::Vec3d Segment::average() {
+	cv::Vec3d total(0,0,0);
+	for (points_set_t::const_iterator it = points.begin(); it != points.end(); it++) {
+		total += image_ptr->at<cv::Vec3b>(*it);
+	}
+	cv::Vec3d average;
+	average[0] = total[0] / points.size();
+	average[1] = total[1] / points.size();
+	average[2] = total[2] / points.size();
+	return average;
 }
