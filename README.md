@@ -5,23 +5,21 @@ TODO:
 	- [x] RGB-Distanse mellom piksler
 	- [x] Putte pixel i segment-set(Lage genotype)
 	- [] Fitness for segment
-		- [] Find centroid
+		- [] Find centroid(average)
 		- [] Find border-pixels
-			- Max/Min for each row?
-			- 2D-Array with Max/Min?
-		- [x] For pixel find neighbour pixels
-			-struct with directions of neighbour?
-			-dynamic?
-	- [] Inserting pixel 
-		- Check if pixel connects to segment
-		- Uppdate min/max or edges list
-	- [] Erasing pixel
-		- Check if pixel makes hole in segment?
-			- Make inner rim
-		- Check if pixel is min/max?
-			- If both Min & Max, check neighbours to detect split. (or Check that the outer rim rows is continious)
-	
-	- [] Detect splits
-		- check for erase inside outer rim
-
-	
+			- 
+		- [] For pixel find neighbour pixels
+			-dynamic? vector!
+			-make 4 & 8 neighbourhood
+	- [] Find neighbour-sements of segment
+	- [] Mutation
+		- [] Merge
+		- [] Split
+	- [] Crossover
+		- [] sort segment from best to worse
+		- [] Fix "broken" sements
+	- [] Initialize Solution
+	- [] Fitness for Solution
+		- [] overall deviation
+		- [] edge value
+		- [] connectivity measure 

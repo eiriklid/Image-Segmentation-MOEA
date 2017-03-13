@@ -4,6 +4,7 @@
 #include <unordered_set>
 #include <opencv2/core/core.hpp>
 
+
 namespace std {
 	template<> struct hash<cv::Point> {
 		size_t operator()(const cv::Point &pt) const {
