@@ -126,6 +126,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Evo_Operator.h" />
+    <ClInclude Include="Parameters.h" />
     <ClInclude Include="Segment.h" />
     <ClInclude Include="Solution.h" />
   </ItemGroup>
