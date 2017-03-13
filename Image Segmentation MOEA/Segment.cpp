@@ -25,3 +25,7 @@ void Segment::print() {
 		std::cout << "(" << it->x << "," << it->y << ")" << std::endl;
 	}
 }
+
+points_set_t Segment::get_points() {
+	return this->points;
+}

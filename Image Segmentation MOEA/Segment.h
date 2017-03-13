@@ -28,6 +28,9 @@ public:
 	void erase_pixel(int x, int y); //return if found?
 	void erase_pixel(cv::Point2i pixel);
 	void print();
+	points_set_t get_points();
+
+
 };
 
 

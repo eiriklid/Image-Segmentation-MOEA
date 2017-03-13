@@ -9,8 +9,8 @@ TODO:
 		- [] Find border-pixels
 			- 
 		- [] For pixel find neighbour pixels
-			-dynamic? vector!
-			-make 4 & 8 neighbourhood
+			- [x] dynamic? vector!
+			- [] make 4 & 8 neighbourhood
 	- [] Find neighbour-sements of segment
 	- [] Mutation
 		- [] Merge
