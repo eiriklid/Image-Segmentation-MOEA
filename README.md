@@ -8,9 +8,9 @@ TODO:
 		- [x] Find centroid(average)
 		- [] Find border-pixels
 			- 
-		- [] For pixel find neighbour pixels
+		- [x] For pixel find neighbour pixels
 			- [x] dynamic? vector!
-			- [] make 4 & 8 neighbourhood
+			- [x] make 4 & 8(n-boxses) neighbourhood
 			- [x] Iterator for point_vec_t
 	- [] Find neighbour-sements of segment
 	- [] Mutation
