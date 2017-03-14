@@ -1,9 +1,6 @@
 #pragma once
-
-
 #include <unordered_set>
 #include <opencv2/core/core.hpp>
-
 
 namespace std {
 	template<> struct hash<cv::Point> {
@@ -31,9 +28,7 @@ public:
 	void print();
 	points_set_t get_points();
 	cv::Vec3d average();
-
-
+	points_set_t get_edge();
 
 };
-
 

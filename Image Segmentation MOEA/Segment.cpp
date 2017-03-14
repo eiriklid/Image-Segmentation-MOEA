@@ -1,7 +1,8 @@
-#include "Segment.h"
-
 #include <opencv2/core/core.hpp>
 #include <iostream>
+
+#include "Segment.h"
+#include "pixel_functions.h"
 
 
 Segment::Segment(cv::Mat* image_ptr) {
@@ -45,4 +46,20 @@ cv::Vec3d Segment::average() {
 	average[1] = total[1] / points.size();
 	average[2] = total[2] / points.size();
 	return average;
+}
+
+points_set_t Segment::get_edge() {
+	point_vec_t neighbour_vec;
+	points_set_t edge_pixels;
+
+	for (points_set_t::const_iterator it = points.begin(); it != points.end(); it++) {
+		neighbour_vec = neighbours(*it, image_ptr);
+		for (point_vec_t::iterator neighbour_it = neighbour_vec.begin(); neighbour_it != neighbour_vec.end(); neighbour_it++) {
+			if (points.find(*neighbour_it) == points.end()) {
+				edge_pixels.insert(*it);
+			}
+		}
+	}
+
+	return edge_pixels;
 }
