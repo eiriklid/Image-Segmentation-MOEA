@@ -5,6 +5,12 @@ double color_distance(cv::Vec3b a, cv::Vec3b b) {
 	cv::Vec3b d = a - b;
 	return cv::norm(d);
 }
+double color_distance(cv::Point2i a, cv::Point2i b, cv::Mat *image) {
+	cv::Vec3b a_vec = image->at<cv::Vec3b>(a);
+	cv::Vec3b b_vec = image->at<cv::Vec3b>(b);
+	return color_distance(a_vec, b_vec);
+}
+
 
 point_vec_t neighbours(cv::Point2i pixel, cv::Mat* image) {
 	point_vec_t neighbour_array;

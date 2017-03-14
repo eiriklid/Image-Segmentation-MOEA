@@ -57,6 +57,7 @@ points_set_t Segment::get_edge() {
 		for (point_vec_t::iterator neighbour_it = neighbour_vec.begin(); neighbour_it != neighbour_vec.end(); neighbour_it++) {
 			if (points.find(*neighbour_it) == points.end()) {
 				edge_pixels.insert(*it);
+				break;
 			}
 		}
 	}

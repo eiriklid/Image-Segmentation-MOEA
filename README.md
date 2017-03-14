@@ -6,8 +6,7 @@ TODO:
 - [x] Putte pixel i segment-set(Lage genotype)
 - [] Fitness for segment
 	- [x] Find centroid(average)
-	- [] Find border-pixels
-		- 
+	- [x] Find border-pixels
 	- [x] For pixel find neighbour pixels
 		- [x] dynamic? vector!
 		- [x] make 4 & 8(n-boxses) neighbourhood
@@ -25,4 +24,4 @@ TODO:
 	- [] edge value
 	- [] connectivity measure 
 
-Lage egen types-fil
+Lage egen types-fil?
