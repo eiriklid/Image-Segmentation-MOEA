@@ -11,14 +11,14 @@ TODO:
 		- [] For pixel find neighbour pixels
 			- [x] dynamic? vector!
 			- [] make 4 & 8 neighbourhood
-			- [] Iterator for point_vec_t
+			- [x] Iterator for point_vec_t
 	- [] Find neighbour-sements of segment
 	- [] Mutation
 		- [] Merge
 		- [] Split
 	- [] Crossover
 		- [] sort segment from best to worse
-		- [] Fix "broken" sements
+		- [] Fix "broken" segments
 	- [] Initialize Solution
 	- [] Fitness for Solution
 		- [] overall deviation
