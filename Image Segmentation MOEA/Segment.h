@@ -27,8 +27,11 @@ public:
 	void erase_pixel(cv::Point2i pixel);
 	void print();
 	points_set_t get_points();
-	cv::Vec3d average();
-	points_set_t get_edge();
+	cv::Vec3d average();		//private?
+	points_set_t get_edge();	//private?
+	double overall_deviation();
+	double edge_value();
+	double conectivity_measure();
 
 };
 

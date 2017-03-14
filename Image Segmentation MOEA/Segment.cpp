@@ -64,3 +64,48 @@ points_set_t Segment::get_edge() {
 
 	return edge_pixels;
 }
+
+double Segment::overall_deviation() {
+	cv::Vec3d centroid = average();
+	double deviation = 0;
+	for (points_set_t::const_iterator it = points.begin(); it != points.end(); it++) {
+		deviation += color_distance(centroid, image_ptr->at<cv::Vec3b>(*it));
+	}
+	return deviation;
+}
+
+double Segment::edge_value() {
+	points_set_t edges = get_edge();
+	point_vec_t neighbour_vec;
+	double distance = 0;
+	for (points_set_t::const_iterator it = edges.begin(); it != edges.end(); it++) {
+		neighbour_vec = neighbours(*it, image_ptr);
+		for (point_vec_t::iterator neighbour_it = neighbour_vec.begin(); neighbour_it != neighbour_vec.end(); neighbour_it++) {
+			if (points.find(*neighbour_it) == points.end()) {
+				distance += color_distance(*it, *neighbour_it, image_ptr);
+			}
+		}
+		
+	}
+	return distance;
+}
+
+double Segment::conectivity_measure() {
+	points_set_t edges = get_edge();
+	point_vec_t neighbour_vec;
+	double connectivity = 0;
+	for (points_set_t::const_iterator it = edges.begin(); it != edges.end(); it++) {
+		neighbour_vec = neighbours(*it, image_ptr);
+		double j = 1;
+		for (point_vec_t::iterator neighbour_it = neighbour_vec.begin(); neighbour_it != neighbour_vec.end(); neighbour_it++) {
+			if (points.find(*neighbour_it) == points.end()) {
+				connectivity += 1/j;
+				j++;
+
+			}
+		}
+
+	}
+
+	return connectivity;
+}
