@@ -1,0 +1,32 @@
+Finn rank:
+	1) For alle individer i poppulasjonen i
+		Mot alle individer j
+			Skriv ned id-en på alle j som er bedre enn i, i ett sett d.
+	
+	2) Sorter etter størrelsen på settet d.
+	
+	3) Begynn fra toppen (færrest elementer). 
+		if(d.sizer() == 0) rank = 0;
+		else rank = en høyere en høyeste rank til individene i d.
+		
+		
+Crowding distance:
+	0) Sett crowding_distance = 0
+	1) For alle ranks r 
+		For alle fitnessfunksjoner f
+			Sorter r mhp f. Lavest først
+			Set fitnessen til den øverste og nederste til uendelig, skriv ned f_min og f_max
+			La i gå gjennom r (utenom første og siste)
+				Øk crowding_distance med (f[i-1] - f[i+1])/(f_max-f_min) //skal være >0.
+
+
+NSGA-II
+	- Poppulasjonen: Første halvdel er foreldre, andre halvdel er barn
+	1) Lag barn
+		Bruk tourney til å velge ut foreldre.
+		Lag ett barn med crossover eller kloning.
+		Muter barnet.
+		Plasser det i barnehalvdelen.
+		Fortsett til alle barn er fyllt opp. 
+	2) Beregn rank og diversitet
+	3) Sorter mhp rank og diversitet.
