@@ -4,14 +4,14 @@ TODO:
 - [x] Få tak i RGB for pixel
 - [x] RGB-Distanse mellom piksler
 - [x] Putte pixel i segment-set(Lage genotype)
-- [] Fitness for segment
+- [x] Fitness for segment
 	- [x] Find centroid(average)
 	- [x] Find border-pixels
 	- [x] For pixel find neighbour pixels
 		- [x] dynamic? vector!
 		- [x] make 4 & 8(n-boxses) neighbourhood
 		- [x] Iterator for point_vec_t
-- [] Find neighbour-sements of segment
+- [] Find neighbour-segments of segment
 - [] Mutation
 	- [] Merge
 	- [] Split
