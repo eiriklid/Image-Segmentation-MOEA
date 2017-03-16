@@ -6,12 +6,13 @@
 #include <unordered_set>
 
 #include "Segment.h"
+#include "pixel_functions.h"
 
 using namespace cv;
 using namespace std;
 
-double color_distance(cv::Vec3b a, cv::Vec3b b);
-cv::Point2i* neighbours(cv::Point2i pixel, cv::Mat& image);
+
+
 
 int main(int argc, char** argv)
 {
@@ -33,63 +34,50 @@ int main(int argc, char** argv)
 	namedWindow("Display window", WINDOW_AUTOSIZE);// Create a window for display.
 	imshow("Display window", image);                   // Show our image inside it.
 
-	
+	/*
 	cv::Vec3d a(200, 200, 200); // color 1
 	cv::Vec3d b(100, 100, 100); // color 2
 	cout << color_distance(a, b) << endl;
-	
+	*/
 
-	Segment test_seg;
+	Segment test_seg(&image);
 
-	for (int i = 0; i < 20; i++) {
-		for (int j = 0; j < 30; j++) {
+	for (int i = 0; i < 30; i++) {
+		for (int j = 0; j < 32; j++) {
 			Point2i c = Point2i(i,j);
 			test_seg.insert_pixel(c);
-			image.at<Vec3b>(c)[0] = 0;
-			image.at<Vec3b>(c)[1] = 255;
-			image.at<Vec3b>(c)[2] = 0;
-
-
+			//image.at<Vec3b>(c)[0] = 0;
+			//image.at<Vec3b>(c)[1] = 255;
+			//image.at<Vec3b>(c)[2] = 0;
 		}
 	}
-	test_seg.print();
-
+	//cout << test_seg.average();
+	//test_seg.print();
 	/*
-	Vec3b s = image.at<Vec3b>(c.x,c.y);
-	cout << s << image.cols << endl;
-	Point2i* ne = neighbours(c, image);
+	Point2i p = Point2i(0, 0);
+	point_vec_t neighbour_vec = neighbours(p, &image,1);
 
-	
-
-	for (int i = 0; i < 4; i++) {
-		cout << ne[i] << "\t";
+	for (point_vec_t::iterator it = neighbour_vec.begin(); it != neighbour_vec.end(); it++) {
+		cout << *it << endl;
 	}
-
 	*/
+	//cout << test_seg.overall_deviation();
+	cout << test_seg.conectivity_measure();
+
+	points_set_t edge = test_seg.get_edge();
+	for (points_set_t::const_iterator it = edge.begin(); it != edge.end(); it++) {
+		//cout << *it << endl;
+		image.at<Vec3b>(*it)[0] = 0;
+		image.at<Vec3b>(*it)[1] = 255;
+		image.at<Vec3b>(*it)[2] = 0;
+	}
+	 
 
 	namedWindow("Green window", WINDOW_AUTOSIZE);// Create a window for display.
 	imshow("Green window", image);                   // Show our image inside it.
-
-
+	
 	waitKey(0);                                          // Wait for a keystroke in the window
-
 	return 0;
 }
 
 
-double color_distance(cv::Vec3b a, cv::Vec3b b) {
-	cv::Vec3b d = a - b;
-	return cv::norm(d);
-}
-
-cv::Point2i* neighbours(cv::Point2i pixel, cv::Mat& image) {
-	cv::Point2i* neighbour_array = new cv::Point2i [4];
-	
-	neighbour_array[0] = ((pixel.x > 0) ? (cv::Point2i(pixel.x - 1, pixel.y)) : (cv::Point2i(-1,-1)));
-	neighbour_array[1] = ((pixel.y > 0) ? (cv::Point2i(pixel.x, pixel.y - 1)) : (cv::Point2i(-1, -1)));
-	neighbour_array[2] = ((pixel.x < image.cols - 1) ? (cv::Point2i(pixel.x + 1, pixel.y)) : (cv::Point2i(-1, -1))); 
-	neighbour_array[3] = ((pixel.y < image.rows - 1) ? (cv::Point2i(pixel.x, pixel.y + 1)) : (cv::Point2i(-1, -1))); 
-
-	return neighbour_array;
-	
-}
