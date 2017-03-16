@@ -12,7 +12,7 @@ Finn rank:
 		
 Crowding distance:
 	0) Sett crowding_distance = 0
-	1) For alle alle ranks r 
+	1) For alle ranks r 
 		For alle fitnessfunksjoner f
 			Sorter r mhp f. Lavest først
 			Set fitnessen til den øverste og nederste til uendelig, skriv ned f_min og f_max
