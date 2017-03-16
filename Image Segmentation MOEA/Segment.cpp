@@ -4,10 +4,32 @@
 #include "Segment.h"
 #include "pixel_functions.h"
 
+Segment::Segment() {
+
+}
 
 Segment::Segment(cv::Mat* image_ptr) {
 	this->image_ptr = image_ptr;
 }
+Segment::Segment(cv::Mat* image_ptr, cv::Point2i pixel) {
+	this->image_ptr = image_ptr;
+	points.insert(pixel);
+}
+Segment::Segment(cv::Mat* image_ptr, Segment a, Segment b) {
+	if (a.neighbour(b)) {
+		std::cout << "Segments not connected!" << std::endl;
+	}
+	this->image_ptr = image_ptr;
+	points_set_t a_points = a.get_points();
+	for (points_set_t::const_iterator it = a_points.begin(); it != a_points.end(); it++) {
+		this->points.insert(*it);
+	}
+	points_set_t b_points = b.get_points();
+	for (points_set_t::const_iterator it = b_points.begin(); it != b_points.end(); it++) {
+		this->points.insert(*it);
+	}
+}
+
 
 
 
@@ -33,8 +55,12 @@ void Segment::print() {
 }
 
 points_set_t Segment::get_points() {
-	return this->points;
+	return points;
 }
+cv::Mat* Segment::get_image_ptr() {
+	return image_ptr;
+}
+
 
 cv::Vec3d Segment::average() {
 	cv::Vec3d total(0,0,0);
@@ -101,11 +127,23 @@ double Segment::conectivity_measure() {
 			if (points.find(*neighbour_it) == points.end()) {
 				connectivity += 1/j;
 				j++;
-
 			}
 		}
-
 	}
-
 	return connectivity;
+}
+
+bool Segment::neighbour(Segment seg) {
+	points_set_t edges = seg.get_edge();
+	point_vec_t neighbour_vec;
+	double connectivity = 0;
+	for (points_set_t::const_iterator it = edges.begin(); it != edges.end(); it++) {
+		neighbour_vec = neighbours(*it, image_ptr);
+		for (point_vec_t::iterator neighbour_it = neighbour_vec.begin(); neighbour_it != neighbour_vec.end(); neighbour_it++) {
+			if (points.find(*neighbour_it) != points.end() ){
+				return true;
+			}
+		}
+	}
+	return false;
 }

@@ -7,6 +7,7 @@
 
 #include "Segment.h"
 #include "pixel_functions.h"
+#include "Solution.h"
 
 using namespace cv;
 using namespace std;
@@ -34,23 +35,24 @@ int main(int argc, char** argv)
 	namedWindow("Display window", WINDOW_AUTOSIZE);// Create a window for display.
 	imshow("Display window", image);                   // Show our image inside it.
 
+	Solution sol = Solution(&image);
 	/*
 	cv::Vec3d a(200, 200, 200); // color 1
 	cv::Vec3d b(100, 100, 100); // color 2
 	cout << color_distance(a, b) << endl;
 	*/
-
-	Segment test_seg(&image);
+	/*
+	Segment a_seg(&image);
+	Segment b_seg(&image);
 
 	for (int i = 0; i < 30; i++) {
 		for (int j = 0; j < 32; j++) {
-			Point2i c = Point2i(i,j);
-			test_seg.insert_pixel(c);
-			//image.at<Vec3b>(c)[0] = 0;
-			//image.at<Vec3b>(c)[1] = 255;
-			//image.at<Vec3b>(c)[2] = 0;
+			a_seg.insert_pixel(Point2i(i, j));
+			b_seg.insert_pixel(Point2i(i + 31, j));
 		}
 	}
+	cout << a_seg.neighbour(b_seg);
+	Segment test_seg(&image, a_seg, b_seg);
 	//cout << test_seg.average();
 	//test_seg.print();
 	/*
@@ -60,9 +62,9 @@ int main(int argc, char** argv)
 	for (point_vec_t::iterator it = neighbour_vec.begin(); it != neighbour_vec.end(); it++) {
 		cout << *it << endl;
 	}
-	*/
+	
 	//cout << test_seg.overall_deviation();
-	cout << test_seg.conectivity_measure();
+	//cout << test_seg.conectivity_measure();
 
 	points_set_t edge = test_seg.get_edge();
 	for (points_set_t::const_iterator it = edge.begin(); it != edge.end(); it++) {
@@ -71,6 +73,7 @@ int main(int argc, char** argv)
 		image.at<Vec3b>(*it)[1] = 255;
 		image.at<Vec3b>(*it)[2] = 0;
 	}
+	*/
 	 
 
 	namedWindow("Green window", WINDOW_AUTOSIZE);// Create a window for display.

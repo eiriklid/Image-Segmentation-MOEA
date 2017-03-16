@@ -14,6 +14,8 @@ TODO:
 - [] Find neighbour-segments of segment
 - [] Mutation
 	- [] Merge
+		- [x] put segment together
+		- [x] Check for conectivity?
 	- [] Split
 - [] Crossover
 	- [] sort segment from best to worse

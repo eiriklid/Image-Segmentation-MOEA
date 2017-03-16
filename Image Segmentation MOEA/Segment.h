@@ -19,7 +19,11 @@ private:
 	cv::Mat* image_ptr;
 
 public:
+	Segment(); //For allocation only
 	Segment(cv::Mat* image_ptr);
+	Segment(cv::Mat* image_ptr, cv::Point2i pixel);
+	Segment(cv::Mat* image_ptr, Segment a, Segment b);
+
 	//~Segment();
 	void insert_pixel(int x, int y);
 	void insert_pixel(cv::Point2i pixel);
@@ -27,11 +31,13 @@ public:
 	void erase_pixel(cv::Point2i pixel);
 	void print();
 	points_set_t get_points();
+	cv::Mat* get_image_ptr();
 	cv::Vec3d average();		//private?
 	points_set_t get_edge();	//private?
 	double overall_deviation();
 	double edge_value();
 	double conectivity_measure();
+	bool neighbour(Segment seg);
 
 };
 

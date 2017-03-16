@@ -25,7 +25,7 @@ Mutation:
 			- Om det har for lang kjøretid: Finn en annen måte å dele opp på. 
 		- Kjør merge blandt undersegmentene til vi har 2 igjen. 
 
-Initial poppulation: 
+Initial population: 
 	- Kjør merge til ønsket antall segmenter nåes (ønsket antall bør være tilfeldig innenfor ett gitt intervall).
 	
 Fitness:
