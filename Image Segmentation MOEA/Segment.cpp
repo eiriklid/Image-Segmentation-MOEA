@@ -108,16 +108,16 @@ points_set_t Segment::get_edge() const{
 	return edge_pixels;
 }
 
-double Segment::overall_deviation() {
+double Segment::calc_overall_deviation() {
 	cv::Vec3d centroid = average();
 	double deviation = 0;
 	for (points_set_t::const_iterator it = points.begin(); it != points.end(); it++) {
 		deviation += color_distance(centroid, image_ptr->at<cv::Vec3b>(*it));
 	}
-	return deviation;
+	return overall_deviation= deviation;
 }
 
-double Segment::edge_value() {
+double Segment::calc_edge_value() {
 	points_set_t edges = get_edge();
 	point_vec_t neighbour_vec;
 	double distance = 0;
@@ -130,10 +130,10 @@ double Segment::edge_value() {
 		}
 		
 	}
-	return distance;
+	return edge_value = distance;
 }
 
-double Segment::conectivity_measure() {
+double Segment::calc_conectivity_measure() {
 	points_set_t edges = get_edge();
 	point_vec_t neighbour_vec;
 	double connectivity = 0;
@@ -147,7 +147,7 @@ double Segment::conectivity_measure() {
 			}
 		}
 	}
-	return connectivity;
+	return connectivity_measure = connectivity;
 }
 
 bool Segment::neighbour(const Segment& seg) {
@@ -165,6 +165,6 @@ bool Segment::neighbour(const Segment& seg) {
 	return false;
 }
 
-void Segment::insert_seg(const Segment& seg) {
+void Segment::insert(const Segment& seg) {
 	points.insert(seg.points.begin(), seg.points.end());
 }

@@ -1,5 +1,13 @@
 #pragma once
 
+#define USE_OVERALL_DEVIATION 1
+#define USE_EDGE_VALUE 1
+#define USE_CONNECTIVITY_MEASURE 1
+#define NUM_OBJECTIVES (USE_OVERALL_DEVIATION+USE_EDGE_VALUE+USE_CONNECTIVITY_MEASURE)
+
+#define INIT_MIN_NUN_SEGMENTS 4
+#define INIT_MAX_NUM_SEGMENTS 20
+
 
 //Sannsynligheter
 //n betyr 1/n. n==0 betyr probabiliy = 0

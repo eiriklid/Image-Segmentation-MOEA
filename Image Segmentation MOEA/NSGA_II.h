@@ -1,9 +1,5 @@
 #pragma once
 
-#define USE_OVERALL_DEVIATION 1
-#define USE_EDGE_VALUE 1
-#define USE_CONNECTIVITY_MEASURE 1
-#define NUM_OBJECTIVES (USE_OVERALL_DEVIATION+USE_EDGE_VALUE+USE_CONNECTIVITY_MEASURE)
 #include "Solution.h"
 
 struct Individual {
