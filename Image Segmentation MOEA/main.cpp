@@ -74,8 +74,17 @@ int main(int argc, char** argv)
 		image.at<Vec3b>(*it)[2] = 0;
 	}
 	*/
-	 
+	seg_vec_t segments = sol.get_segments();
+	for (seg_vec_t::iterator seg_it = segments.begin(); seg_it != segments.end(); seg_it++) {
 
+		points_set_t edge = seg_it->get_edge();
+		for (points_set_t::const_iterator it = edge.begin(); it != edge.end(); it++) {
+			//cout << *it << endl;
+			image.at<Vec3b>(*it)[0] = 0;
+			image.at<Vec3b>(*it)[1] = 255;
+			image.at<Vec3b>(*it)[2] = 0;
+		}
+	}
 	namedWindow("Green window", WINDOW_AUTOSIZE);// Create a window for display.
 	imshow("Green window", image);                   // Show our image inside it.
 	

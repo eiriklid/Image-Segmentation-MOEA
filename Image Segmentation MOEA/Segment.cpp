@@ -16,7 +16,7 @@ Segment::Segment(cv::Mat* image_ptr, cv::Point2i pixel) {
 	points.insert(pixel);
 }
 Segment::Segment(cv::Mat* image_ptr, Segment a, Segment b) {
-	if (a.neighbour(b)) {
+	if (a.neighbour(b) == false) {
 		std::cout << "Segments not connected!" << std::endl;
 	}
 	this->image_ptr = image_ptr;
@@ -30,7 +30,23 @@ Segment::Segment(cv::Mat* image_ptr, Segment a, Segment b) {
 	}
 }
 
+Segment::Segment(Segment a, Segment b) {
+	this->image_ptr = a.get_image_ptr();
+	if (a.neighbour(b)) {
 
+		points_set_t a_points = a.get_points();
+		for (points_set_t::const_iterator it = a_points.begin(); it != a_points.end(); it++) {
+			this->points.insert(*it);
+		}
+		points_set_t b_points = b.get_points();
+		for (points_set_t::const_iterator it = b_points.begin(); it != b_points.end(); it++) {
+			this->points.insert(*it);
+		}
+	}
+	else {
+		std::cout << "Segments not connected!" << std::endl;
+	}
+}
 
 
 void Segment::insert_pixel(int x, int y) {
@@ -146,4 +162,11 @@ bool Segment::neighbour(Segment seg) {
 		}
 	}
 	return false;
+}
+
+void Segment::insert_seg(Segment seg) {
+	points_set_t seg_points = seg.get_points();
+	for (points_set_t::const_iterator it = seg_points.begin(); it != seg_points.end(); it++) {
+		insert_pixel(*it);
+	}
 }

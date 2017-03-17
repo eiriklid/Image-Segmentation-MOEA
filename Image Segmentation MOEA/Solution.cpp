@@ -1,9 +1,15 @@
 #include "Solution.h"
+#include "Segment.h"
+
+#include <iostream>
 
 
+Solution::Solution() {
+
+}
 
 Solution::Solution(cv::Mat* image_ptr){
-	segments = std::vector<Segment>(image_ptr->cols*image_ptr->rows);
+	segments = seg_vec_t(image_ptr->cols*image_ptr->rows);
 	this->image_ptr = image_ptr;
 	for (int i = 0; i < image_ptr->cols; i++) {
 		for (int j = 0; j < image_ptr->rows; j++) {
@@ -11,10 +17,46 @@ Solution::Solution(cv::Mat* image_ptr){
 			segments.push_back(seg);
 		}
 	}
-}
-
-Solution::Solution() {
+	
 
 }
+seg_vec_t Solution::get_segments() {
+	return segments;
+}
+/*
+seg_ptr_vec_t Solution::neighbour_seg(Segment seg) {
+	seg_ptr_vec_t neighbour_segs;
+	for (seg_vec_t::iterator it = segments.begin(); it != segments.end(); it++) {
+		if (seg.neighbour(*it)) {
+			neighbour_segs.push_back(&*it);
+		}
+	}
+	return neighbour_segs;
+}
 
+
+index_vec_t Solution::neighbour_seg(Segment seg) {
+	seg_itr_vec_t neighbour_segs;
+	for (seg_vec_t::iterator it = segments.begin(); it != segments.end(); it++) {
+		if (seg.neighbour(*it)) {
+			neighbour_segs.push_back(it);
+		}
+	}
+	return neighbour_segs;
+}
+*/
+
+
+Segment Solution::merge(Segment a, Segment b) {
+	return Segment(a, b);
+}
+
+void Solution::merge_with_all_neighbours(Segment* seg) {
+	for (seg_vec_t::iterator it = segments.begin(); it != segments.end(); it++) {
+		if (seg->neighbour(*it)) {
+			
+		}
+
+	}
+}
 

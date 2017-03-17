@@ -22,7 +22,9 @@ public:
 	Segment(); //For allocation only
 	Segment(cv::Mat* image_ptr);
 	Segment(cv::Mat* image_ptr, cv::Point2i pixel);
+	Segment(Segment a, Segment b);
 	Segment(cv::Mat* image_ptr, Segment a, Segment b);
+
 
 	//~Segment();
 	void insert_pixel(int x, int y);
@@ -38,6 +40,7 @@ public:
 	double edge_value();
 	double conectivity_measure();
 	bool neighbour(Segment seg);
+	void insert_seg(Segment seg);
 
 };
 

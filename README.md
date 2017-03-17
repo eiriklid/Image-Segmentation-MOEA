@@ -11,8 +11,11 @@ TODO:
 		- [x] dynamic? vector!
 		- [x] make 4 & 8(n-boxses) neighbourhood
 		- [x] Iterator for point_vec_t
-- [] Find neighbour-segments of segment
-- [] Mutation
+- [ ] Find neighbour-segments of segment
+	- [x] Check if neighbour
+	- [] Get all neighbours
+- [ ] Initialize Solution
+- [ ] Mutation
 	- [] Merge
 		- [x] put segment together
 		- [x] Check for conectivity?
@@ -20,7 +23,6 @@ TODO:
 - [] Crossover
 	- [] sort segment from best to worse
 	- [] Fix "broken" segments
-- [] Initialize Solution
 - [] Fitness for Solution
 	- [] overall deviation
 	- [] edge value
