@@ -29,18 +29,18 @@ public:
 	//~Segment();
 	void insert_pixel(int x, int y);
 	void insert_pixel(cv::Point2i pixel);
-	void erase_pixel(int x, int y); //return if found?
-	void erase_pixel(cv::Point2i pixel);
+	bool erase_pixel(int x, int y); //return if found?
+	bool erase_pixel(cv::Point2i pixel);
 	void print();
-	points_set_t get_points();
-	cv::Mat* get_image_ptr();
+	points_set_t* get_points();
+	const cv::Mat* get_image_ptr();
 	cv::Vec3d average();		//private?
-	points_set_t get_edge();	//private?
+	points_set_t get_edge() const;	//private?
 	double overall_deviation();
 	double edge_value();
 	double conectivity_measure();
-	bool neighbour(Segment seg);
-	void insert_seg(Segment seg);
+	bool neighbour(const Segment& seg);
+	void insert_seg(const Segment& seg);
 
 };
 

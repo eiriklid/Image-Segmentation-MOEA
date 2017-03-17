@@ -5,10 +5,8 @@
 #include "pixel_functions.h"
 
 
-//test comment
-
 Segment::Segment() {
-
+	image_ptr = nullptr;
 }
 
 Segment::Segment(cv::Mat* image_ptr) {
@@ -23,26 +21,26 @@ Segment::Segment(cv::Mat* image_ptr, Segment a, Segment b) {
 		std::cout << "Segments not connected!" << std::endl;
 	}
 	this->image_ptr = image_ptr;
-	points_set_t a_points = a.get_points();
-	for (points_set_t::const_iterator it = a_points.begin(); it != a_points.end(); it++) {
+	points_set_t* a_points = a.get_points();
+	for (points_set_t::const_iterator it = a_points->begin(); it != a_points->end(); it++) {
 		this->points.insert(*it);
 	}
-	points_set_t b_points = b.get_points();
-	for (points_set_t::const_iterator it = b_points.begin(); it != b_points.end(); it++) {
+	points_set_t* b_points = b.get_points();
+	for (points_set_t::const_iterator it = b_points->begin(); it != b_points->end(); it++) {
 		this->points.insert(*it);
 	}
 }
 
 Segment::Segment(Segment a, Segment b) {
-	this->image_ptr = a.get_image_ptr();
+	this->image_ptr = a.image_ptr;
 	if (a.neighbour(b)) {
 
-		points_set_t a_points = a.get_points();
-		for (points_set_t::const_iterator it = a_points.begin(); it != a_points.end(); it++) {
+		points_set_t* a_points = a.get_points();
+		for (points_set_t::const_iterator it = a_points->begin(); it != a_points->end(); it++) {
 			this->points.insert(*it);
 		}
-		points_set_t b_points = b.get_points();
-		for (points_set_t::const_iterator it = b_points.begin(); it != b_points.end(); it++) {
+		points_set_t* b_points = b.get_points();
+		for (points_set_t::const_iterator it = b_points->begin(); it != b_points->end(); it++) {
 			this->points.insert(*it);
 		}
 	}
@@ -60,11 +58,11 @@ void Segment::insert_pixel(cv::Point2i pixel) {
 }
 
 
-void Segment::erase_pixel(int x, int y) {
-	this->points.erase(cv::Point2i(x, y));
+bool Segment::erase_pixel(int x, int y) {
+	return this->points.erase(cv::Point2i(x, y));
 }
-void Segment::erase_pixel(cv::Point2i pixel) {
-	this->points.erase(pixel);
+bool Segment::erase_pixel(cv::Point2i pixel) {
+	return this->points.erase(pixel);
 }
 
 void Segment::print() {
@@ -73,10 +71,10 @@ void Segment::print() {
 	}
 }
 
-points_set_t Segment::get_points() {
-	return points;
+points_set_t* Segment::get_points() {
+	return &points;
 }
-cv::Mat* Segment::get_image_ptr() {
+const cv::Mat* Segment::get_image_ptr() {
 	return image_ptr;
 }
 
@@ -93,7 +91,7 @@ cv::Vec3d Segment::average() {
 	return average;
 }
 
-points_set_t Segment::get_edge() {
+points_set_t Segment::get_edge() const{
 	point_vec_t neighbour_vec;
 	points_set_t edge_pixels;
 
@@ -152,7 +150,7 @@ double Segment::conectivity_measure() {
 	return connectivity;
 }
 
-bool Segment::neighbour(Segment seg) {
+bool Segment::neighbour(const Segment& seg) {
 	points_set_t edges = seg.get_edge();
 	point_vec_t neighbour_vec;
 	double connectivity = 0;
@@ -167,9 +165,6 @@ bool Segment::neighbour(Segment seg) {
 	return false;
 }
 
-void Segment::insert_seg(Segment seg) {
-	points_set_t seg_points = seg.get_points();
-	for (points_set_t::const_iterator it = seg_points.begin(); it != seg_points.end(); it++) {
-		insert_pixel(*it);
-	}
+void Segment::insert_seg(const Segment& seg) {
+	points.insert(seg.points.begin(), seg.points.end());
 }
