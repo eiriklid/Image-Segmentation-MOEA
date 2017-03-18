@@ -24,7 +24,7 @@ private:
 
 public:
 	points_set_t points; //public for crossover?
-
+	bool isChanged;
 
 	Segment(); //For allocation only
 	Segment(cv::Mat* image_ptr);
@@ -40,7 +40,7 @@ public:
 	bool erase_pixel(cv::Point2i pixel);
 	void print();
 	points_set_t* get_points();
-	const cv::Mat* get_image_ptr();
+	cv::Mat* get_image_ptr();
 	cv::Vec3d average();		//private?
 	points_set_t get_edge() const;	//private?
 	void get_edge(points_set_t* edge_pixels) const;
@@ -57,7 +57,7 @@ public:
 
 	bool neighbour(const Segment& seg);
 	void insert(const Segment& seg);
-	void erase(const Segment& seg);
+	bool erase(const Segment& seg);
 
 };
 

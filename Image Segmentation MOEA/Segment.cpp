@@ -74,7 +74,7 @@ void Segment::print() {
 points_set_t* Segment::get_points() {
 	return &points;
 }
-const cv::Mat* Segment::get_image_ptr() {
+cv::Mat* Segment::get_image_ptr() {
 	return image_ptr;
 }
 
@@ -194,6 +194,10 @@ bool Segment::neighbour(const Segment& seg) {
 void Segment::insert(const Segment& seg) {
 	points.insert(seg.points.begin(), seg.points.end());
 }
-void Segment::erase(const Segment& seg) {
-	points.erase(seg.points.begin(), seg.points.end());
+bool Segment::erase(const Segment& seg) {
+	int didErase = 0;
+	for (auto it = seg.points.begin(); it != seg.points.end(); ++it) {
+		didErase += points.erase(*it);
+	}
+	return didErase > 0;
 }

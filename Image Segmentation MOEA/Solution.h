@@ -11,10 +11,10 @@ typedef std::vector <Segment> seg_vec_t;
 
 class Solution{
 private:
-	seg_vec_t segments;
 	cv::Mat* image_ptr;
 	double fitness[3];
 public:
+	seg_vec_t segments;
 	Solution(); //gjør hele init prosessen
 	Solution(cv::Mat* image_ptr);
 

@@ -12,6 +12,8 @@
 //Sannsynligheter
 //n betyr 1/n. n==0 betyr probabiliy = 0
 #define CLONE_RATE 10
+#define MUTATION_SPLIT_RATE 5
+#define MUTATION_MERGE_RATE 5
 
 //NSGA-II
 #define POPPULATION_SIZE 100

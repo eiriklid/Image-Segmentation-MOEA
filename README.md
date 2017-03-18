@@ -35,3 +35,6 @@ Ryktet sier at cv::Mat sin at() har dårlgi kjøretid!!!
 de annbefaler istedet å hente ut en peker og så brue vanlig[]
 
 VI burde prøve droppe å gjøre sqrt(), 
+
+Jeg har brukt unordred_set::erase feil, den må ta inn itteratorer hos seg selv
+så vi må gå gjennom alle verdiene og slette dem en av gangen.

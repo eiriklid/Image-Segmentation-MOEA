@@ -69,11 +69,83 @@ Individual* tourney(vector<Individual>* poppulation) {
 }
 
 void crossover(const Individual* parent1, const Individual* parent2, Individual* child) {
+	//HEAVY!
+
+	//Put alle segmentene fra begge foreldrene inn hos barnet
+	child->sol.segments.clear();
+	child->sol.segments.insert(child->sol.segments.begin(), parent1->sol.segments.begin(), parent1->sol.segments.end());
+	child->sol.segments.insert(child->sol.segments.begin(), parent1->sol.segments.begin(), parent1->sol.segments.end());
+
+	for (auto it = child->sol.segments.begin(); it != child->sol.segments.end(); ++it) {
+		it->isChanged = 0;
+	}
+
+	//Sorter segmentene hos barnet etter etellerannet
+	sort(child->sol.segments.begin(), child->sol.segments().end(), /*NOE HER*/);
+
+
+	//Itterer gjennom alle segmentene i
+	for (auto it = child->sol.segments.begin(); it != child->sol.segments.end(); ++it) {
+		//Gå gjennomm alle etterliggende set j
+		for (auto jt = it + 1; jt != child->sol.segments.end(); ++jt) {
+			//slett i fra j
+			jt->isChanged |= jt->erase(*it);
+			//Marker om noe ble endret
+		}
+	}
+		
+
+	//HEAVY, TODO dette må det gå ann å gjøre bedre, eller teste på mer før vi deler.
+	//Utvikl noen tester for å se om den ble delt, sett isChanged om det er ett problem
+	//For alle segmenter som ble endret
+	//TODO er dette rett??
+	cv::Point2i currentPoint;
+	vector<Segment>::iterator newSegment;
+	point_vec_t unhandled_neighbours;
+	point_vec_t current_neighbours;
+	for (auto it = child->sol.segments.begin(); it != child->sol.segments.end(); ++it) {
+		if (it->isChanged) {
+			//while det er piksler igjen i segmentet
+			while (it->points.size() > 0) {
+				//velg en tilfeldig piksel, putt den i ett nytt segment (valgte tilfeldighvis den første :P)
+				currentPoint = *(it->points.begin());
+				it->points.erase(currentPoint);
+				child->sol.segments.push_back(Segment(it->get_image_ptr(), currentPoint));
+				newSegment = child->sol.segments.end() - 1;
+				unhandled_neighbours.push_back(currentPoint);
+				while (unhandled_neighbours.size()) {
+					currentPoint = unhandled_neighbours[0];
+					//finn alle naboene og putt dem i dette segmentet, slett fra det gamle
+					current_neighbours = neighbours(currentPoint, it->get_image_ptr());
+					for (auto point_it = current_neighbours.begin(); point_it != current_neighbours.end(); point_it++) {
+						//hvis vi klarte å slette det var det i settet
+						if (it->points.erase(*point_it) == 1) {
+							unhandled_neighbours.push_back(*point_it);
+						}
+					}
+
+				}
+			}
+		}
+	}
+		
+	//Gå gjennom settene
+	for (auto it = child->sol.segments.begin(); it != child->sol.segments.end(); ++it) {
+		//Slett alle tomme.
+		if (it->points.size() == 0) {
+			child->sol.segments.erase(it);
+		}
+	}
 
 }
 
 void mutate(Individual* ind) {
-
+	if (MUTATION_SPLIT_RATE && !(rand() % MUTATION_SPLIT_RATE)) {
+		ind->sol.mutation_split();
+	}
+	if (MUTATION_MERGE_RATE && !(rand() % MUTATION_MERGE_RATE)) {
+		ind->sol.mutation_merge();
+	}
 }
 
 void calcRank(vector<Individual>& poppulation) {
