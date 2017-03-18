@@ -91,21 +91,44 @@ cv::Vec3d Segment::average() {
 	return average;
 }
 
+//Finds a pixel that has a neighbour outside the section
 points_set_t Segment::get_edge() const{
-	point_vec_t neighbour_vec;
 	points_set_t edge_pixels;
+	get_edge(&edge_pixels);
+
+	return edge_pixels;
+}
+
+void Segment::get_edge(points_set_t* edge_pixels) const{
+	edge_pixels->clear();
+	point_vec_t neighbour_vec;
 
 	for (points_set_t::const_iterator it = points.begin(); it != points.end(); it++) {
 		neighbour_vec = neighbours(*it, image_ptr);
 		for (point_vec_t::iterator neighbour_it = neighbour_vec.begin(); neighbour_it != neighbour_vec.end(); neighbour_it++) {
 			if (points.find(*neighbour_it) == points.end()) {
-				edge_pixels.insert(*it);
+				edge_pixels->insert(*it);
 				break;
 			}
 		}
 	}
+}
 
-	return edge_pixels;
+//finds the neighbours outside the section
+void Segment::get_neighbouring_pixels(points_set_t* neighbour_pixels) const{
+	neighbour_pixels->clear();
+	point_vec_t neighbour_vec;
+
+	for (points_set_t::const_iterator it = points.begin(); it != points.end(); it++) {
+		neighbour_vec = neighbours(*it, image_ptr);
+		for (point_vec_t::iterator neighbour_it = neighbour_vec.begin(); neighbour_it != neighbour_vec.end(); neighbour_it++) {
+			if (points.find(*neighbour_it) == points.end()) {
+				//Blir ikke lagt til dobbelt pga unordred set
+				neighbour_pixels->insert(*neighbour_it);
+				break;
+			}
+		}
+	}
 }
 
 double Segment::calc_overall_deviation() {
@@ -118,7 +141,8 @@ double Segment::calc_overall_deviation() {
 }
 
 double Segment::calc_edge_value() {
-	points_set_t edges = get_edge();
+	points_set_t edges;
+	get_edge(&edges);
 	point_vec_t neighbour_vec;
 	double distance = 0;
 	for (points_set_t::const_iterator it = edges.begin(); it != edges.end(); it++) {
@@ -134,7 +158,8 @@ double Segment::calc_edge_value() {
 }
 
 double Segment::calc_conectivity_measure() {
-	points_set_t edges = get_edge();
+	points_set_t edges;
+	get_edge(&edges);
 	point_vec_t neighbour_vec;
 	double connectivity = 0;
 	for (points_set_t::const_iterator it = edges.begin(); it != edges.end(); it++) {
@@ -151,7 +176,8 @@ double Segment::calc_conectivity_measure() {
 }
 
 bool Segment::neighbour(const Segment& seg) {
-	points_set_t edges = seg.get_edge();
+	points_set_t edges;
+	seg.get_edge(&edges);
 	point_vec_t neighbour_vec;
 	double connectivity = 0;
 	for (points_set_t::const_iterator it = edges.begin(); it != edges.end(); it++) {
@@ -167,4 +193,7 @@ bool Segment::neighbour(const Segment& seg) {
 
 void Segment::insert(const Segment& seg) {
 	points.insert(seg.points.begin(), seg.points.end());
+}
+void Segment::erase(const Segment& seg) {
+	points.erase(seg.points.begin(), seg.points.end());
 }

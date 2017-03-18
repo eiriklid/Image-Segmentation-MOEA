@@ -4,6 +4,7 @@
 #include <opencv2/core/core.hpp>
 #include "Segment.h"
 #include "pixel_functions.h"
+#include <Algorithm>
 
 typedef std::vector <Segment> seg_vec_t;
 //typedef std::vector <int> index_vec_t;
@@ -27,9 +28,11 @@ public:
 
 	void calc_fitness();
 	double* read_fitness() { return fitness; }
+	double read_fitness(int i) const { return fitness[i]; }
 
 	void split(seg_vec_t::iterator seg_it);
 	int merge(Segment* seg1, std::unordered_set<int>& neighbourIDs);
+	int merge(Segment* seg1, vector<Segment*>* segments, unordered_set<int>& neighbourIDs);
 
 	//Det vi trenger top nivå:
 	void mutation_merge();

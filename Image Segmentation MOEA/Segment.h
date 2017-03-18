@@ -43,6 +43,8 @@ public:
 	const cv::Mat* get_image_ptr();
 	cv::Vec3d average();		//private?
 	points_set_t get_edge() const;	//private?
+	void get_edge(points_set_t* edge_pixels) const;
+	void get_neighbouring_pixels(points_set_t* neighbour_pixels) const;
 
 	double calc_fitness();
 	double calc_overall_deviation();

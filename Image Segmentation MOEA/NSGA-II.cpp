@@ -82,9 +82,9 @@ void calcRank(vector<Individual>& poppulation) {
 		//Find all dominating individuals
 		for (int j = 0; j < poppulation.size(); ++j) {
 			if (i != j) {
-				if (poppulation[j].sol.fitness[0] < poppulation[i].sol.fitness[0]
-					&& poppulation[j].sol.fitness[1] < poppulation[i].sol.fitness[1]
-					&& poppulation[j].sol.fitness[2] < poppulation[i].sol.fitness[2]) {
+				if (poppulation[j].sol.read_fitness(0) < poppulation[i].sol.read_fitness(0)
+					&& poppulation[j].sol.read_fitness(1) < poppulation[i].sol.read_fitness(1)
+					&& poppulation[j].sol.read_fitness(2) < poppulation[i].sol.read_fitness(2)) {
 					poppulation[i].domminatingSolutionIDs.push_back(j);
 				}
 			}
@@ -141,13 +141,13 @@ void calcCrowdingDistance(vector<Individual>& poppulation) {
 			//Setter ytterpunktene i denne dimmensjonen til å ha uendelig crowdingDistance 
 			poppulation[rankStart].crowdingDistance = INFINITY;
 			poppulation[rankEnd - 1].crowdingDistance = INFINITY;
-			f_min = poppulation[rankStart].sol.fitness[objFunc];
-			f_max = poppulation[rankEnd - 1].sol.fitness[objFunc];
+			f_min = poppulation[rankStart].sol.read_fitness(objFunc);
+			f_max = poppulation[rankEnd - 1].sol.read_fitness(objFunc);
 
 			if (rankStart + 1 < rankEnd - 1) {
 				//mer enn 2 elementer
 				for (auto it = poppulation.begin() + rankStart + 1; it != poppulation.begin() + rankEnd - 1; ++it) {
-					it->crowdingDistance += ((it + 1)->sol.fitness[objFunc] - (it - 1)->sol.fitness[objFunc]) / (f_max - f_min);
+					it->crowdingDistance += ((it + 1)->sol.read_fitness(objFunc) - (it - 1)->sol.read_fitness(objFunc)) / (f_max - f_min);
 				}
 			}
 		}
@@ -156,11 +156,11 @@ void calcCrowdingDistance(vector<Individual>& poppulation) {
 }
 
 bool sortOnFitness1(const Individual& lhs, const Individual& rhs) {
-	return lhs.sol.fitness[0] < lhs.sol.fitness[0];
+	return lhs.sol.read_fitness(0) < lhs.sol.read_fitness(0);
 }
 bool sortOnFitness2(const Individual& lhs, const Individual& rhs) {
-	return lhs.sol.fitness[1] < lhs.sol.fitness[1];
+	return lhs.sol.read_fitness(1) < lhs.sol.read_fitness(1);
 }
 bool sortOnFitness3(const Individual& lhs, const Individual& rhs) {
-	return lhs.sol.fitness[2] < lhs.sol.fitness[2];
+	return lhs.sol.read_fitness(2) < lhs.sol.read_fitness(2);
 }
