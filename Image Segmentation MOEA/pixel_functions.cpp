@@ -1,13 +1,14 @@
 #include "pixel_functions.h"
+#include <math.h>
 
+using namespace std;
 
-double color_distance(cv::Vec3b a, cv::Vec3b b) {
-	cv::Vec3b d = a - b;
-	return cv::norm(d);
+double color_distance(RGB a, RGB b) {
+	return sqrt(pow(a.blue - b.blue, 2)+ pow(a.green - b.green, 2)+ pow(a.red - b.red, 2));
 }
 double color_distance(cv::Point2i a, cv::Point2i b, cv::Mat *image) {
-	cv::Vec3b a_vec = image->at<cv::Vec3b>(a);
-	cv::Vec3b b_vec = image->at<cv::Vec3b>(b);
+	RGB a_vec = image->ptr<RGB>(a.y)[a.x];;
+	RGB b_vec = image->ptr<RGB>(b.y)[b.x];;
 	return color_distance(a_vec, b_vec);
 }
 

@@ -2,7 +2,6 @@
 #include <iostream>
 
 #include "Segment.h"
-#include "pixel_functions.h"
 
 
 Segment::Segment() {
@@ -80,15 +79,21 @@ cv::Mat* Segment::get_image_ptr() {
 }
 
 
-cv::Vec3d Segment::average() {
-	cv::Vec3d total(0,0,0);
-	for (points_set_t::const_iterator it = points.begin(); it != points.end(); it++) {
-		total += image_ptr->at<cv::Vec3b>(*it);
+RGB Segment::average() {
+	double r = 0;
+	double g = 0;
+	double b = 0;
+	RGB* current;
+	for (points_set_t::const_iterator it = points.begin(); it != points.end(); ++it) {
+		current = image_ptr->ptr<RGB>(it->y)+ it->x;
+		r += current->red;
+		g += current->green;
+		b += current->blue;
 	}
-	cv::Vec3d average;
-	average[0] = total[0] / points.size();
-	average[1] = total[1] / points.size();
-	average[2] = total[2] / points.size();
+	RGB average;
+	average.blue = b / points.size();
+	average.green = g/ points.size();
+	average.red = r/ points.size();
 	return average;
 }
 
@@ -139,10 +144,10 @@ void Segment::calc_fitness() {
 }
 
 double Segment::calc_overall_deviation() {
-	cv::Vec3d centroid = average();
+	RGB centroid = average();
 	double deviation = 0;
 	for (points_set_t::const_iterator it = points.begin(); it != points.end(); it++) {
-		deviation += color_distance(centroid, image_ptr->at<cv::Vec3b>(*it));
+		deviation += color_distance(centroid, image_ptr->at<RGB>(*it));
 	}
 	return overall_deviation= deviation;
 }

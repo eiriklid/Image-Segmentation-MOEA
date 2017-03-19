@@ -2,6 +2,7 @@
 #include <unordered_set>
 #include <opencv2/core/core.hpp>
 #include "Parameters.h"
+#include "pixel_functions.h"
 
 namespace std {
 	template<> struct hash<cv::Point> {
@@ -41,7 +42,6 @@ public:
 	void print();
 	points_set_t* get_points();
 	cv::Mat* get_image_ptr();
-	cv::Vec3d average();		//private?
 	//points_set_t get_edge() const;	//private?
 	void get_edge(points_set_t* edge_pixels) const;
 	void get_neighbouring_pixels(points_set_t* neighbour_pixels) const;
@@ -62,5 +62,7 @@ public:
 	bool operator ==(const Segment& rhs) {
 		return points == rhs.points;
 	}
+
+	RGB average();
 };
 

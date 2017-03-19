@@ -11,7 +11,7 @@ struct Individual {
 		if (rank != rhs.rank) return rank < rhs.rank;
 		else return crowdingDistance > rhs.crowdingDistance;
 	}
-	Individual() {};
+	Individual() {}
 	Individual(cv::Mat* image_ptr) {
 		sol = Solution(image_ptr);
 	}

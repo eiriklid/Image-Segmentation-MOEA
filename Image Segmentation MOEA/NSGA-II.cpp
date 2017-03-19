@@ -79,19 +79,19 @@ void NSGA_II(cv::Mat* image_ptr) {
 			cin >> read;
 			if (read < 0) num += -read;
 			else {
-				display = *image_ptr;
+				/*display = *image_ptr;
 				for (seg_vec_t::iterator seg_it = poppulation[read].sol.segments.begin(); seg_it != poppulation[read].sol.segments.end(); ++seg_it) {
 					seg_it->get_edge(&edge);
 					for (points_set_t::const_iterator it = edge.begin(); it != edge.end(); it++) {
 						//cout << *it << endl;
-						display.at<cv::Vec3b>(*it)[0] = 0;
-						display.at<cv::Vec3b>(*it)[1] = 255;
-						display.at<cv::Vec3b>(*it)[2] = 0;
+						display.ptr<RGB>(*it)()[0] = 0;
+						display.ptr<RGB>(*it)[1] = 255;
+						display.ptr<RGB>(*it)[2] = 0;
 					}
 				}
 				cv::namedWindow("Green window", cv::WINDOW_AUTOSIZE);// Create a window for display.
 				cv::imshow("Green window", display);                   // Show our image inside it.
-				cv::waitKey(0);
+				cv::waitKey(0);*/
 			}
 			cout << "\n\n\n";
 		}

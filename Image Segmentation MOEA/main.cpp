@@ -19,13 +19,13 @@ int main()
 	Mat image;
 	image = imread(FILENAME, CV_LOAD_IMAGE_COLOR);   // Read the file
 
-	cout << "Rows: " << image.rows <<  "\nColums " << image.cols << "\nChannels " << image.channels() << endl;
+	/*cout << "Rows: " << image.rows <<  "\nColums " << image.cols << "\nChannels " << image.channels() << endl;
 	cout << "continous? " << image.isContinuous() << endl;
 
 	uchar* imagePtr = image.ptr<uchar>(0);
 	cout << (int)*(imagePtr + image.rows*image.cols*image.channels()-1);
 	
-	system("PAUSE");
+	system("PAUSE");*/
 
 
 
@@ -40,12 +40,12 @@ int main()
 
 	//waitKey(1);                                          // Wait for a keystroke in the window
 
-	//NSGA_II(&image);
+	NSGA_II(&image);
 
 	//Solution sol = Solution(&image);
 	/*
-	cv::Vec3d a(200, 200, 200); // color 1
-	cv::Vec3d b(100, 100, 100); // color 2
+	RGB a(200, 200, 200); // color 1
+	RGB b(100, 100, 100); // color 2
 	cout << color_distance(a, b) << endl;
 	*/
 	/*
