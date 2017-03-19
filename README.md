@@ -20,9 +20,9 @@ TODO:
 		- [x] put segment together
 		- [x] Check for conectivity?
 	- [?] Split
-- [] Crossover
-	- [] sort segment from best to worse
-	- [] Fix "broken" segments
+- [?] Crossover
+	- [?] sort segment from best to worse
+	- [?] Fix "broken" segments
 - [x] Fitness for Solution
 	- [x] overall deviation
 	- [x] edge value

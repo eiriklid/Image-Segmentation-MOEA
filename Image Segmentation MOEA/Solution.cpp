@@ -35,6 +35,10 @@ const seg_vec_t* Solution::get_segments() {
 }
 
 void Solution::calc_fitness() {
+	fitness[0] = 0;
+	fitness[1] = 0;
+	fitness[2] = 1;
+
 	for (auto it = segments.begin(); it != segments.end(); ++it) {
 		fitness[0] += it->calc_conectivity_measure();
 		fitness[1] += it->calc_edge_value();

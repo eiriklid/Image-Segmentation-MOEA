@@ -16,7 +16,8 @@ Segment::Segment(cv::Mat* image_ptr, cv::Point2i pixel) {
 	this->image_ptr = image_ptr;
 	points.insert(pixel);
 }
-Segment::Segment(cv::Mat* image_ptr, Segment a, Segment b) {
+
+/*Segment::Segment(cv::Mat* image_ptr, Segment a, Segment b) {
 	if (a.neighbour(b) == false) {
 		std::cout << "Segments not connected!" << std::endl;
 	}
@@ -29,9 +30,9 @@ Segment::Segment(cv::Mat* image_ptr, Segment a, Segment b) {
 	for (points_set_t::const_iterator it = b_points->begin(); it != b_points->end(); it++) {
 		this->points.insert(*it);
 	}
-}
+}*/
 
-Segment::Segment(Segment a, Segment b) {
+/*Segment::Segment(Segment a, Segment b) {
 	this->image_ptr = a.image_ptr;
 	if (a.neighbour(b)) {
 
@@ -47,7 +48,7 @@ Segment::Segment(Segment a, Segment b) {
 	else {
 		std::cout << "Segments not connected!" << std::endl;
 	}
-}
+}*/
 
 
 void Segment::insert_pixel(int x, int y) {
@@ -92,12 +93,12 @@ cv::Vec3d Segment::average() {
 }
 
 //Finds a pixel that has a neighbour outside the section
-points_set_t Segment::get_edge() const{
+/*points_set_t Segment::get_edge() const{
 	points_set_t edge_pixels;
 	get_edge(&edge_pixels);
 
 	return edge_pixels;
-}
+}*/
 
 void Segment::get_edge(points_set_t* edge_pixels) const{
 	edge_pixels->clear();
@@ -129,6 +130,12 @@ void Segment::get_neighbouring_pixels(points_set_t* neighbour_pixels) const{
 			}
 		}
 	}
+}
+
+void Segment::calc_fitness() {
+	calc_conectivity_measure();
+	calc_edge_value();
+	calc_overall_deviation();
 }
 
 double Segment::calc_overall_deviation() {
@@ -175,7 +182,7 @@ double Segment::calc_conectivity_measure() {
 	return connectivity_measure = connectivity;
 }
 
-bool Segment::neighbour(const Segment& seg) {
+/*bool Segment::neighbour(const Segment& seg) {
 	points_set_t edges;
 	seg.get_edge(&edges);
 	point_vec_t neighbour_vec;
@@ -189,7 +196,7 @@ bool Segment::neighbour(const Segment& seg) {
 		}
 	}
 	return false;
-}
+}*/
 
 void Segment::insert(const Segment& seg) {
 	points.insert(seg.points.begin(), seg.points.end());

@@ -5,15 +5,25 @@
 #include <time.h>
 #include <algorithm>
 
+
+#include <opencv2/core/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/opencv.hpp>
+
 #include "NSGA_II.h"
 
 using namespace std;
 
-Solution NSGA_II() {
+void NSGA_II(cv::Mat* image_ptr) {
+	cv::Mat display;
 	srand(time(NULL));
 	//0 -> POPPULATION_SIZE-1: Parents, POPPULATION_SIZE->2*POPPULATION_SIZE-1: Children
 	vector<Individual> poppulation(2 * POPPULATION_SIZE, Individual());
 	
+	//Initialiserer
+	for (auto it = poppulation.begin(); it != poppulation.end(); ++it) {
+		*it = Individual(image_ptr);
+	}
 
 	//Beregn rank og diversitet
 	calcRank(poppulation);
@@ -23,6 +33,17 @@ Solution NSGA_II() {
 	Individual* parent1;
 	Individual* parent2;
 	Individual* child;
+
+	int count= 0;
+	int num;
+	int printRate;
+	cout << "Number of itterations: ";
+	cin >> num;
+	cout << "\nPrint rate: ";
+	cin >> printRate;
+	int read;
+
+	points_set_t edge;
 
 	while (1) {
 		//Lag barn, plasser fra POPPULATION_SIZE->end
@@ -44,19 +65,47 @@ Solution NSGA_II() {
 		calcCrowdingDistance(poppulation);
 
 		//Sorter mhp rank så diversitet.
-		sort(poppulation.begin(), poppulation.end());		
+		sort(poppulation.begin(), poppulation.end());
+
+		if (count%printRate) {
+			cout << num;
+		}
+		while (count >= num) {
+			for (int i = 0; i < POPPULATION_SIZE && poppulation[i].rank == poppulation[0].rank;++i) {
+				cout << i << ") numSeg: " << poppulation[i].sol.segments.size() << endl;
+			}
+			
+			cout << "Write index to see solution, negative number to continue\n";
+			cin >> read;
+			if (read < 0) num += -read;
+			else {
+				display = *image_ptr;
+				for (seg_vec_t::iterator seg_it = poppulation[read].sol.segments.begin(); seg_it != poppulation[read].sol.segments.end(); ++seg_it) {
+					seg_it->get_edge(&edge);
+					for (points_set_t::const_iterator it = edge.begin(); it != edge.end(); it++) {
+						//cout << *it << endl;
+						display.at<cv::Vec3b>(*it)[0] = 0;
+						display.at<cv::Vec3b>(*it)[1] = 255;
+						display.at<cv::Vec3b>(*it)[2] = 0;
+					}
+				}
+				cv::namedWindow("Green window", cv::WINDOW_AUTOSIZE);// Create a window for display.
+				cv::imshow("Green window", display);                   // Show our image inside it.
+			}
+			cout << "\n\n\n";
+		}
+		count++;
 	}
 }
 
 Individual* tourney(vector<Individual>* poppulation) {
 	Individual* winner = &(*poppulation)[rand() % POPPULATION_SIZE];
 
-	//sjangse for at ikke tilfeldig velges
+	//sjangse for at _ikke_ tilfeldig velges
 	if (!TOURNEY_ERROR_RATE || (rand() % TOURNEY_ERROR_RATE)) {
-
 		vector<int> participants(TOURNEY_SIZE, 0);
 		for (int i = 0; i < TOURNEY_SIZE; ++i) {
-			participants[i] = rand() % POPPULATION_SIZE;
+			participants.push_back(rand() % POPPULATION_SIZE);
 		}
 
 		for (int i = 0; i < TOURNEY_SIZE; ++i) {
@@ -81,7 +130,13 @@ void crossover(const Individual* parent1, const Individual* parent2, Individual*
 	}
 
 	//Sorter segmentene hos barnet etter etellerannet
-	sort(child->sol.segments.begin(), child->sol.segments().end(), /*NOE HER*/);
+	typedef bool(*sortFunc)(const Segment&, const Segment&);
+	sortFunc sortArray[3];
+	sortArray[0] = &sortSegmentsOnFitness1;
+	sortArray[1] = &sortSegmentsOnFitness2;
+	sortArray[2] = &sortSegmentsOnFitness3;
+
+	sort(child->sol.segments.begin(), child->sol.segments.end(), sortArray[rand()%3]);
 
 
 	//Itterer gjennom alle segmentene i
@@ -113,13 +168,18 @@ void crossover(const Individual* parent1, const Individual* parent2, Individual*
 				child->sol.segments.push_back(Segment(it->get_image_ptr(), currentPoint));
 				newSegment = child->sol.segments.end() - 1;
 				unhandled_neighbours.push_back(currentPoint);
+
 				while (unhandled_neighbours.size()) {
-					currentPoint = unhandled_neighbours[0];
+					currentPoint = *(unhandled_neighbours.end()-1);
+					unhandled_neighbours.pop_back();
+					newSegment->points.insert(currentPoint);
 					//finn alle naboene og putt dem i dette segmentet, slett fra det gamle
 					current_neighbours = neighbours(currentPoint, it->get_image_ptr());
 					for (auto point_it = current_neighbours.begin(); point_it != current_neighbours.end(); point_it++) {
 						//hvis vi klarte å slette det var det i settet
 						if (it->points.erase(*point_it) == 1) {
+							//når vi kommer til ett element vi har tatt før er det 
+							//allerede slettet så det kan vi ikke gjøre igjen
 							unhandled_neighbours.push_back(*point_it);
 						}
 					}
@@ -130,14 +190,28 @@ void crossover(const Individual* parent1, const Individual* parent2, Individual*
 	}
 		
 	//Gå gjennom settene
-	for (auto it = child->sol.segments.begin(); it != child->sol.segments.end(); ++it) {
+	for (auto it = child->sol.segments.begin(); it != child->sol.segments.end();) {
 		//Slett alle tomme.
 		if (it->points.size() == 0) {
-			child->sol.segments.erase(it);
+			it = child->sol.segments.erase(it);
+		}
+		else {
+			++it;
 		}
 	}
-
 }
+
+bool sortSegmentsOnFitness1(const Segment& lhs, const Segment& rhs) {
+	return lhs.read_overall_deviation()< rhs.read_overall_deviation();
+}
+bool sortSegmentsOnFitness2(const Segment& lhs, const Segment& rhs) {
+	return lhs.read_edge_value() < rhs.read_edge_value();
+}
+bool sortSegmentsOnFitness3(const Segment& lhs, const Segment& rhs) {
+	return lhs.read_connectivity_measure()< rhs.read_connectivity_measure();
+}
+
+
 
 void mutate(Individual* ind) {
 	if (MUTATION_SPLIT_RATE && !(rand() % MUTATION_SPLIT_RATE)) {
@@ -150,7 +224,7 @@ void mutate(Individual* ind) {
 
 void calcRank(vector<Individual>& poppulation) {
 	for (int i = 0; i < poppulation.size(); ++i) {
-		poppulation[i].domminatingSolutionIDs.clear(); //HEAVY
+		poppulation[i].domminatingSolutionIDs.clear();
 		//Find all dominating individuals
 		for (int j = 0; j < poppulation.size(); ++j) {
 			if (i != j) {
@@ -172,9 +246,9 @@ void calcRank(vector<Individual>& poppulation) {
 		}
 		else {
 			//rank = highest rank of dominators +1
-			it->rank = INT_MAX;
+			it->rank = 0;
 			for (auto dt = it->domminatingSolutionIDs.begin(); dt != it->domminatingSolutionIDs.end(); ++dt) {
-				it->rank = min(it->rank, poppulation[*dt].rank+1);
+				it->rank = max(it->rank, poppulation[*dt].rank+1);
 			}
 		}
 	}
@@ -228,11 +302,11 @@ void calcCrowdingDistance(vector<Individual>& poppulation) {
 }
 
 bool sortOnFitness1(const Individual& lhs, const Individual& rhs) {
-	return lhs.sol.read_fitness(0) < lhs.sol.read_fitness(0);
+	return lhs.sol.read_fitness(0) < rhs.sol.read_fitness(0);
 }
 bool sortOnFitness2(const Individual& lhs, const Individual& rhs) {
-	return lhs.sol.read_fitness(1) < lhs.sol.read_fitness(1);
+	return lhs.sol.read_fitness(1) < rhs.sol.read_fitness(1);
 }
 bool sortOnFitness3(const Individual& lhs, const Individual& rhs) {
-	return lhs.sol.read_fitness(2) < lhs.sol.read_fitness(2);
+	return lhs.sol.read_fitness(2) < rhs.sol.read_fitness(2);
 }
