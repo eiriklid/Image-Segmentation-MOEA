@@ -2,6 +2,12 @@
 #include <opencv2/core/core.hpp>
 #include <vector>
 
+struct RGB {
+	uchar blue;
+	uchar green;
+	uchar red;
+};
+
 
 typedef std::vector<cv::Point2i> point_vec_t;
 double color_distance(cv::Vec3b a, cv::Vec3b b);

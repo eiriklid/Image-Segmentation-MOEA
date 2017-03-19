@@ -91,6 +91,7 @@ void NSGA_II(cv::Mat* image_ptr) {
 				}
 				cv::namedWindow("Green window", cv::WINDOW_AUTOSIZE);// Create a window for display.
 				cv::imshow("Green window", display);                   // Show our image inside it.
+				cv::waitKey(0);
 			}
 			cout << "\n\n\n";
 		}

@@ -11,12 +11,12 @@ Solution::Solution() {
 //Initializes to one segment per pixel
 Solution::Solution(cv::Mat* image_ptr){
 	//SPAGHETTI level: low
-	segments = seg_vec_t(image_ptr->cols*image_ptr->rows);
+	//segments = seg_vec_t(image_ptr->cols*image_ptr->rows);
+	segments.reserve(image_ptr->cols*image_ptr->rows);
 	this->image_ptr = image_ptr;
 	for (int i = 0; i < image_ptr->cols; i++) {
 		for (int j = 0; j < image_ptr->rows; j++) {
-			Segment seg = Segment(image_ptr, cv::Point2i(i, j));
-			segments.push_back(seg);
+			segments.push_back(Segment(image_ptr, cv::Point2i(i, j)));
 		}
 	}
 

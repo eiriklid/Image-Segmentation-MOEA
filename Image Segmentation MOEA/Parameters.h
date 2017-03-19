@@ -1,5 +1,7 @@
 #pragma once
 
+#define FILENAME "img1.jpg"
+
 #define USE_OVERALL_DEVIATION 1
 #define USE_EDGE_VALUE 1
 #define USE_CONNECTIVITY_MEASURE 1

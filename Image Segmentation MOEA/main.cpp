@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include <unordered_set>
+#include <string>
 
 #include "Segment.h"
 #include "pixel_functions.h"
@@ -13,19 +14,20 @@
 using namespace cv;
 using namespace std;
 
-
-
-
-int main(int argc, char** argv)
+int main()
 {
-	if (argc != 2)
-	{
-		cout << " Usage: display_image ImageToLoadAndDisplay" << endl;
-		return -1;
-	}
-
 	Mat image;
-	image = imread(argv[1], CV_LOAD_IMAGE_COLOR);   // Read the file
+	image = imread(FILENAME, CV_LOAD_IMAGE_COLOR);   // Read the file
+
+	cout << "Rows: " << image.rows <<  "\nColums " << image.cols << "\nChannels " << image.channels() << endl;
+	cout << "continous? " << image.isContinuous() << endl;
+
+	uchar* imagePtr = image.ptr<uchar>(0);
+	cout << (int)*(imagePtr + image.rows*image.cols*image.channels()-1);
+	
+	system("PAUSE");
+
+
 
 	if (!image.data)                              // Check for invalid input
 	{
@@ -33,10 +35,12 @@ int main(int argc, char** argv)
 		return -1;
 	}
 
-	namedWindow("Display window", WINDOW_AUTOSIZE);// Create a window for display.
-	imshow("Display window", image);                   // Show our image inside it.
+	//namedWindow("Display window", WINDOW_AUTOSIZE);// Create a window for display.
+	//imshow("Display window", image);                   // Show our image inside it.
 
-	NSGA_II(&image);
+	//waitKey(1);                                          // Wait for a keystroke in the window
+
+	//NSGA_II(&image);
 
 	//Solution sol = Solution(&image);
 	/*
@@ -91,7 +95,6 @@ int main(int argc, char** argv)
 	namedWindow("Green window", WINDOW_AUTOSIZE);// Create a window for display.
 	imshow("Green window", image);                   // Show our image inside it.*/
 	
-	waitKey(0);                                          // Wait for a keystroke in the window
 	return 0;
 }
 
