@@ -27,13 +27,16 @@ public:
 	points_set_t points; //public for crossover?
 	bool isChanged;
 
+	RGB average;
+
 	Segment(); //For allocation only
 	Segment(cv::Mat* image_ptr);
 	Segment(cv::Mat* image_ptr, cv::Point2i pixel);
 	//segment(Segment a, Segment b);
 	//Segment(cv::Mat* image_ptr, Segment a, Segment b);
 
-
+	void calc_average();
+	RGB read_average() { return average; }
 	//~Segment();
 	void insert_pixel(int x, int y);
 	void insert_pixel(cv::Point2i pixel);
@@ -62,7 +65,5 @@ public:
 	bool operator ==(const Segment& rhs) {
 		return points == rhs.points;
 	}
-
-	RGB average();
 };
 

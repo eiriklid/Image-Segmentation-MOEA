@@ -1,5 +1,6 @@
 #include <vector>
 #include "Parameters.h"
+#include <string>
 #include <iostream>
 #include <stdlib.h>
 #include <time.h>
@@ -35,12 +36,12 @@ void NSGA_II(cv::Mat* image_ptr) {
 	Individual* child;
 
 	int count= 0;
-	int num;
-	int printRate;
-	cout << "Number of itterations: ";
+	int num = 10;
+	int printRate= 1;
+	/*cout << "Number of itterations: ";
 	cin >> num;
 	cout << "\nPrint rate: ";
-	cin >> printRate;
+	cin >> printRate;*/
 	int read;
 
 	points_set_t edge;

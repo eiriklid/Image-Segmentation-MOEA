@@ -79,7 +79,7 @@ cv::Mat* Segment::get_image_ptr() {
 }
 
 
-RGB Segment::average() {
+void Segment::calc_average() {
 	double r = 0;
 	double g = 0;
 	double b = 0;
@@ -90,11 +90,10 @@ RGB Segment::average() {
 		g += current->green;
 		b += current->blue;
 	}
-	RGB average;
+	average;
 	average.blue = b / points.size();
 	average.green = g/ points.size();
 	average.red = r/ points.size();
-	return average;
 }
 
 //Finds a pixel that has a neighbour outside the section
@@ -144,7 +143,8 @@ void Segment::calc_fitness() {
 }
 
 double Segment::calc_overall_deviation() {
-	RGB centroid = average();
+	calc_average();
+	RGB centroid = read_average();
 	double deviation = 0;
 	for (points_set_t::const_iterator it = points.begin(); it != points.end(); it++) {
 		deviation += color_distance(centroid, image_ptr->at<RGB>(*it));

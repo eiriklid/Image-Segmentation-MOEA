@@ -1,6 +1,6 @@
 #pragma once
 
-#define FILENAME "img1.jpg"
+#define FILENAME "img1_xxxxs.png"
 
 #define USE_OVERALL_DEVIATION 1
 #define USE_EDGE_VALUE 1
@@ -18,6 +18,6 @@
 #define MUTATION_MERGE_RATE 5
 
 //NSGA-II
-#define POPPULATION_SIZE 100
+#define POPPULATION_SIZE 10
 #define TOURNEY_SIZE 2
 #define TOURNEY_ERROR_RATE 20

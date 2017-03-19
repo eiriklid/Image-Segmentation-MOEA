@@ -31,8 +31,8 @@ public:
 	double read_fitness(int i) const { return fitness[i]; }
 
 	void split(seg_vec_t::iterator seg_it);
-	int merge(Segment* seg1, std::unordered_set<int>& neighbourIDs);
-	int merge(Segment* seg1, std::vector<Segment*>* segments, std::unordered_set<int>& neighbourIDs);
+	void merge(Segment* seg1, std::unordered_set<int>& neighbourIDs);
+	void merge(Segment* seg1, std::vector<Segment*>* segments, std::unordered_set<int>& neighbourIDs);
 
 	//Det vi trenger top nivå:
 	void mutation_merge();

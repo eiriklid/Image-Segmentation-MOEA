@@ -7,8 +7,8 @@ double color_distance(RGB a, RGB b) {
 	return sqrt(pow(a.blue - b.blue, 2)+ pow(a.green - b.green, 2)+ pow(a.red - b.red, 2));
 }
 double color_distance(cv::Point2i a, cv::Point2i b, cv::Mat *image) {
-	RGB a_vec = image->ptr<RGB>(a.y)[a.x];;
-	RGB b_vec = image->ptr<RGB>(b.y)[b.x];;
+	RGB a_vec = image->ptr<RGB>(a.y)[a.x];
+	RGB b_vec = image->ptr<RGB>(b.y)[b.x];
 	return color_distance(a_vec, b_vec);
 }
 

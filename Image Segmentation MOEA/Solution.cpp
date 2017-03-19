@@ -17,6 +17,7 @@ Solution::Solution(cv::Mat* image_ptr){
 	for (int i = 0; i < image_ptr->cols; i++) {
 		for (int j = 0; j < image_ptr->rows; j++) {
 			segments.push_back(Segment(image_ptr, cv::Point2i(i, j)));
+			(segments.end() - 1)->average = image_ptr->ptr<RGB>(j)[i];
 		}
 	}
 
@@ -91,7 +92,7 @@ void find_neighbours(const Segment* seg, std::vector<Segment*>* segments, std::u
 
 
 //Merge seg1 with one of the given neighbourIDs, where it is the ID in the local variable segments
-int Solution::merge(Segment* seg1, unordered_set<int>& neighbourIDs_segments) {
+/*int Solution::merge(Segment* seg1, unordered_set<int>& neighbourIDs_segments) {
 	//SPAGHETTI level: medium-
 	double originalFitness[NUM_OBJECTIVES];
 	originalFitness[0] = seg1->read_overall_deviation();
@@ -126,6 +127,7 @@ int Solution::merge(Segment* seg1, unordered_set<int>& neighbourIDs_segments) {
 	segments.erase(segments.begin() + *bestNeighbour_it);
 	return *bestNeighbour_it;
 }
+
 
 //Merge seg1 with one of the given neighbourIDs, where the ID reffers to the given set
 //delets the merged element from Solution::segments and the given list segment_pts
@@ -169,8 +171,71 @@ int Solution::merge(Segment* seg1, vector<Segment*>* segment_pts, unordered_set<
 	segment_pts->erase(segment_pts->begin() + *bestNeighbour_it);
 
 	return *bestNeighbour_it;
-}
+}*/
 
+//trenger å starte med segmenter som har rett average color, resultatet har fortsatt rett average color
+void Solution::merge(Segment* seg1, vector<Segment*>* segment_pts, unordered_set<int>& neighbourIDs) {
+
+	//SPAGHETTI level: medium+
+	Segment* bestNeighbour = seg1;
+	unordered_set<int>::iterator bestNeighbour_it;
+	double bestNeighbourVal = INFINITY;
+	double currentVal;
+	for (auto it = neighbourIDs.begin(); it != neighbourIDs.end(); ++it) {
+		currentVal = color_distance(segment_pts->at(*it)->average, seg1->average);
+		if (currentVal < bestNeighbourVal) {
+			bestNeighbourVal = currentVal;
+			bestNeighbour = segment_pts->at(*it);
+			bestNeighbour_it = it;
+		}
+	}
+
+	if (bestNeighbour == seg1) return;
+
+	//merger den som faktisk var best
+	seg1->insert(*bestNeighbour);
+
+	//sett average
+	seg1->average.blue = ((double)seg1->average.blue * seg1->points.size() + (double)bestNeighbour->average.blue * bestNeighbour->points.size()) / (seg1->points.size() + bestNeighbour->points.size());
+	seg1->average.green = ((double)seg1->average.green * seg1->points.size() + (double)bestNeighbour->average.green * bestNeighbour->points.size()) / (seg1->points.size() + bestNeighbour->points.size());
+	seg1->average.red= ((double)seg1->average.red * seg1->points.size() + (double)bestNeighbour->average.red * bestNeighbour->points.size()) / (seg1->points.size() + bestNeighbour->points.size());
+
+	//Sletter den vi merget fra
+	//Må også finne den i Solution::segments og slette den der.
+	auto pos_SolutionSegments = find(segments.begin(), segments.end(), *bestNeighbour);
+	segments.erase(pos_SolutionSegments);
+
+	//Sletter fra lista over segments vi nå ser på
+	segment_pts->erase(segment_pts->begin()+*bestNeighbour_it);
+}
+void Solution::merge(Segment* seg1, unordered_set<int>& neighbourIDs) {
+	//SPAGHETTI level: medium+
+	Segment* bestNeighbour = seg1;
+	unordered_set<int>::iterator bestNeighbour_it;
+	double bestNeighbourVal = INFINITY;
+	double currentVal;
+	for (auto it = neighbourIDs.begin(); it != neighbourIDs.end(); ++it) {
+		currentVal = color_distance(segments.at(*it).average, seg1->average);
+		if (currentVal < bestNeighbourVal) {
+			bestNeighbourVal = currentVal;
+			bestNeighbour = &(segments.at(*it));
+			bestNeighbour_it = it;
+		}
+	}
+
+	if (bestNeighbour == seg1) return;
+
+	//merger den som faktisk var best
+	seg1->insert(*bestNeighbour);
+
+	//sett average
+	seg1->average.blue = ((double)seg1->average.blue * seg1->points.size() + (double)bestNeighbour->average.blue * bestNeighbour->points.size()) / (seg1->points.size() + bestNeighbour->points.size());
+	seg1->average.green = ((double)seg1->average.green * seg1->points.size() + (double)bestNeighbour->average.green * bestNeighbour->points.size()) / (seg1->points.size() + bestNeighbour->points.size());
+	seg1->average.red = ((double)seg1->average.red * seg1->points.size() + (double)bestNeighbour->average.red * bestNeighbour->points.size()) / (seg1->points.size() + bestNeighbour->points.size());
+
+	//Sletter den vi merget fra
+	segments.erase(segments.begin() + *bestNeighbour_it);
+}
 
 void Solution::split(seg_vec_t::iterator seg_it) {
 	/*Splits innto little pieces, combines them uitill there are only two segments*/
@@ -184,8 +249,10 @@ void Solution::split(seg_vec_t::iterator seg_it) {
 	for (auto it = seg_it->points.begin(); it != seg_it->points.end(); ++it) {
 		//legg til pikselen som eget segment
 		segments.push_back(Segment(image_ptr, *it));
+
 		//skriv ned at vi må ta hensyn til dette segmentet
 		toBeMerged.push_back(&*(segments.end() - 1));
+		(*(toBeMerged.end()-1))->average = image_ptr->ptr<RGB>(it->y)[it->x];
 	}
 	//sletter seg
 	segments.erase(seg_it);
@@ -199,6 +266,7 @@ void Solution::split(seg_vec_t::iterator seg_it) {
 		//Finnn naboene som er blant toBeMerged
 		find_neighbours(current, &toBeMerged, &neighbourIDs, image_ptr);
 		//merge dem
+		//Pass på at ting har beregnet average først
 		merge(current, &toBeMerged,neighbourIDs);
 	}
 }
@@ -213,6 +281,12 @@ void Solution::mutation_merge() {
 	//merg den med den beste naboen
 	unordered_set<int> neighbourIDs;
 	find_neighbours(seg1, &segments, &neighbourIDs, image_ptr);
+	//Pass på at ting har regnet ut average først
+	seg1->calc_average();
+	for (auto it = neighbourIDs.begin(); it != neighbourIDs.end(); ++it) {
+		segments[(*it)].calc_average();
+	}
+
 	merge(seg1, neighbourIDs);
 }
 
