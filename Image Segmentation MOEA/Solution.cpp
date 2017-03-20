@@ -370,7 +370,7 @@ void Solution::split(int seg_index, int n, vector<Point>& sepparation_points) {
 	//Finn naboene deres lag queue_element, fyll ut med info, og legg til i priority queue
 	point_vec_t current_neighbours;
 	queue_element current_element;
-	for (int i = 0; i != sepparation_points.size(); ++i) {
+	for (int i = 0; i < sepparation_points.size(); ++i) {
 		current_neighbours = neighbours(sepparation_points[i], image_ptr);
 		current_element.seg_id = new_segments[i];
 		for (auto neighbour_it = current_neighbours.begin(); neighbour_it != current_neighbours.end(); ++neighbour_it) {
@@ -385,13 +385,18 @@ void Solution::split(int seg_index, int n, vector<Point>& sepparation_points) {
 		//Slett meg fra det originale settet, om det skjedde så gjør vi resten (altså vi er ikke allerede ekspedert)
 		//sett meg inn i det nye
 		//finn alle naboer, lag queue elementer, fyll ut og putt inn
+	int slettet= sepparation_points.size();
+	int lagttil = 0;
+
 	while (elements.size()){
 		if (segments[seg_index].points.erase(elements.top().pnt)) {
+			slettet++;
 			segments[elements.top().seg_id].points.insert(elements.top().pnt);
 
 			current_neighbours = neighbours(elements.top().pnt, image_ptr);
 			current_element.seg_id = elements.top().seg_id;
 			for (auto neighbour_it = current_neighbours.begin(); neighbour_it != current_neighbours.end(); ++neighbour_it) {
+				lagttil++;
 				current_element.pnt = *neighbour_it;
 				current_element.colourDistance = color_distance(elements.top().pnt, *neighbour_it, image_ptr);
 				elements.push(current_element);
@@ -399,8 +404,28 @@ void Solution::split(int seg_index, int n, vector<Point>& sepparation_points) {
 		}
 		elements.pop();
 	}
+	cout << endl<<slettet<< " " << lagttil<< endl;
+	int lagtTil = 0;
+	auto bestSegment = segments.begin();
+	bool doBreak;
+	for (auto it = segments[seg_index].points.begin(); it != segments[seg_index].points.end(); ++it) {
+		current_neighbours = neighbours(*it, image_ptr);
+		doBreak = 0;
+		for (auto n_it = current_neighbours.begin(); !doBreak && n_it != current_neighbours.end(); ++n_it) {
+			for (auto s = segments.begin(); !doBreak && s != segments.end(); ++s) {
+				if (find(s->points.begin(), s->points.end(), *n_it) != s->points.end()) {
+					s->points.insert(*it);
+					doBreak = 1;
+					lagtTil++;
+				}
+			}
+		}
+		if (!doBreak) {
+			cout << "Dette var ikke bra\n";
+		}
+	}
+	cout << "Lagt til: " << lagtTil << endl;
 
-	testIntegrity();
 	//slett det originale settet som nå er tomt.
 	segments.erase(segments.begin()+seg_index);
 	testIntegrity();
