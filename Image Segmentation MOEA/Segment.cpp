@@ -67,8 +67,9 @@ bool Segment::erase_pixel(cv::Point2i pixel) {
 
 void Segment::print() {
 	for (points_set_t::const_iterator it = points.begin(); it != points.end(); it++) {
-		std::cout << "(" << it->x << "," << it->y << ")" << std::endl;
+		std::cout << "(" << it->x << "," << it->y << ") " ;
 	}
+	std::cout << std::endl;
 }
 
 points_set_t* Segment::get_points() {
@@ -110,7 +111,7 @@ void Segment::get_edge(points_set_t* edge_pixels) const{
 
 	for (points_set_t::const_iterator it = points.begin(); it != points.end(); it++) {
 		neighbour_vec = neighbours(*it, image_ptr);
-		for (point_vec_t::iterator neighbour_it = neighbour_vec.begin(); neighbour_it != neighbour_vec.end(); neighbour_it++) {
+		for (point_vec_t::const_iterator neighbour_it = neighbour_vec.begin(); neighbour_it != neighbour_vec.end(); neighbour_it++) {
 			if (points.find(*neighbour_it) == points.end()) {
 				edge_pixels->insert(*it);
 				break;
@@ -147,7 +148,7 @@ double Segment::calc_overall_deviation() {
 	RGB centroid = read_average();
 	double deviation = 0;
 	for (points_set_t::const_iterator it = points.begin(); it != points.end(); it++) {
-		deviation += color_distance(centroid, image_ptr->at<RGB>(*it));
+		deviation += color_distance(centroid, image_ptr->ptr<RGB>((*it).y)[(*it).x]);
 	}
 	return overall_deviation= deviation;
 }

@@ -22,8 +22,9 @@ void NSGA_II(cv::Mat* image_ptr) {
 	vector<Individual> poppulation(2 * POPPULATION_SIZE, Individual());
 	
 	//Initialiserer
-	for (auto it = poppulation.begin(); it != poppulation.end(); ++it) {
+	for (auto it = poppulation.begin(); it != poppulation.begin()+POPPULATION_SIZE; ++it) {
 		*it = Individual(image_ptr);
+		it->sol.calc_fitness();
 	}
 
 	//Beregn rank og diversitet
@@ -59,6 +60,7 @@ void NSGA_II(cv::Mat* image_ptr) {
 				crossover(parent1, parent2, child);
 			}
 			mutate(child);
+			child->sol.calc_fitness();
 		}
 
 		//Beregn rank og diversitet
@@ -80,20 +82,22 @@ void NSGA_II(cv::Mat* image_ptr) {
 			cin >> read;
 			if (read < 0) num += -read;
 			else {
-				/*display = *image_ptr;
+				
+				display = *image_ptr;
 				for (seg_vec_t::iterator seg_it = poppulation[read].sol.segments.begin(); seg_it != poppulation[read].sol.segments.end(); ++seg_it) {
 					seg_it->get_edge(&edge);
-					for (points_set_t::const_iterator it = edge.begin(); it != edge.end(); it++) {
-						//cout << *it << endl;
-						display.ptr<RGB>(*it)()[0] = 0;
-						display.ptr<RGB>(*it)[1] = 255;
-						display.ptr<RGB>(*it)[2] = 0;
+					for (points_set_t::iterator it = edge.begin(); it != edge.end(); it++) {
+						cout << *it << endl;
+						display.ptr<RGB>((*it).y)[(*it).x] = RGB(0, 255, 0);
 					}
 				}
-				cv::namedWindow("Green window", cv::WINDOW_AUTOSIZE);// Create a window for display.
-				cv::imshow("Green window", display);                   // Show our image inside it.
-				cv::waitKey(0);*/
+				cv::namedWindow("NSGA window", cv::WINDOW_AUTOSIZE);// Create a window for display.
+				cv::imshow("NSGA window", display);                   // Show our image inside it.
+				cv::waitKey(0);
+				
+
 			}
+
 			cout << "\n\n\n";
 		}
 		count++;

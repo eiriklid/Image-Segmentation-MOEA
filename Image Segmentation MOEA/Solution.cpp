@@ -1,6 +1,9 @@
 #include "Segment.h"
 #include "Solution.h"
 #include <iostream>
+#include <stdlib.h>
+#include <time.h>
+
 
 using namespace std;
 
@@ -12,17 +15,49 @@ Solution::Solution() {
 Solution::Solution(cv::Mat* image_ptr){
 	//SPAGHETTI level: low
 	//segments = seg_vec_t(image_ptr->cols*image_ptr->rows);
-	segments.reserve(image_ptr->cols*image_ptr->rows);
+	segments.reserve(image_ptr->cols*image_ptr->rows/25);
 	this->image_ptr = image_ptr;
+	int x_seg;
+	int y_seg;
+	int y_tot = 0;
+	do 
+	{
+		int x_tot = 0;
+		y_seg = ((rand() %( image_ptr->rows / 5)) + y_tot)+1;
+		if (y_seg >= image_ptr->rows) {
+			y_seg = image_ptr->rows - 1;
+		}
+		do {
+			x_seg = (rand() %( image_ptr->cols / 5)) + x_tot + 1;
+			if (x_seg >= image_ptr->cols) {
+				x_seg = image_ptr->cols - 1;
+			}
+			Segment temp_seg(image_ptr);
+			for (int i = x_tot; i < x_seg; i++) {
+				for (int j = y_tot; j < y_seg; j++) {
+					temp_seg.insert_pixel(cv::Point2i(i, j));
+				}
+			}
+			segments.push_back(temp_seg);
+			x_tot = x_seg;
+				
+
+		} while (x_tot < image_ptr->cols - 1);
+		
+	y_tot = y_seg;
+
+	} while (y_tot < image_ptr->rows-1);
+	/*	
 	for (int i = 0; i < image_ptr->cols; i++) {
 		for (int j = 0; j < image_ptr->rows; j++) {
 			segments.push_back(Segment(image_ptr, cv::Point2i(i, j)));
 			(segments.end() - 1)->average = image_ptr->ptr<RGB>(j)[i];
 		}
 	}
-
+	*/
 	//Nå har vi ett segment for hver piksel,
 	//Velg en tilfeldig piksel og merge.
+	
 	Segment* seg;
 	unordered_set<int> neighbours;
 	while (segments.size() > INIT_MIN_NUN_SEGMENTS && (segments.size() > INIT_MAX_NUM_SEGMENTS || rand() % (INIT_MAX_NUM_SEGMENTS - INIT_MIN_NUN_SEGMENTS))){
@@ -30,6 +65,7 @@ Solution::Solution(cv::Mat* image_ptr){
 		find_neighbours(seg, &segments, &neighbours,image_ptr);
 		merge(seg,neighbours);
 	}
+	
 }
 const seg_vec_t* Solution::get_segments() {
 	return &segments;
@@ -223,7 +259,10 @@ void Solution::merge(Segment* seg1, unordered_set<int>& neighbourIDs) {
 		}
 	}
 
-	if (bestNeighbour == seg1) return;
+
+	if (bestNeighbour == seg1) {
+		return;
+	}
 
 	//merger den som faktisk var best
 	seg1->insert(*bestNeighbour);

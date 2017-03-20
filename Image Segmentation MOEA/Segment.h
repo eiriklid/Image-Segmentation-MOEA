@@ -40,12 +40,12 @@ public:
 	//~Segment();
 	void insert_pixel(int x, int y);
 	void insert_pixel(cv::Point2i pixel);
-	bool erase_pixel(int x, int y); //return if found?
+	bool erase_pixel(int x, int y); 
 	bool erase_pixel(cv::Point2i pixel);
 	void print();
 	points_set_t* get_points();
 	cv::Mat* get_image_ptr();
-	//points_set_t get_edge() const;	//private?
+	//points_set_t get_edge() const;	
 	void get_edge(points_set_t* edge_pixels) const;
 	void get_neighbouring_pixels(points_set_t* neighbour_pixels) const;
 

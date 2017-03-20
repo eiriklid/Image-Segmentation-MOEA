@@ -6,6 +6,12 @@ struct RGB {
 	uchar blue;
 	uchar green;
 	uchar red;
+	RGB(uchar b, uchar g, uchar r) {
+		blue = b;
+		green = g;
+		red = r;
+	}
+	RGB(){}
 };
 
 
