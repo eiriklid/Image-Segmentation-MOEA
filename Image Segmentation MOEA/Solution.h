@@ -10,11 +10,12 @@ typedef std::vector <Segment> seg_vec_t;
 //typedef std::vector <int> index_vec_t;
 
 class Solution{
-private:
-	cv::Mat* image_ptr;
-	double fitness[3];
 public:
 	seg_vec_t segments;
+private:
+	double fitness[3];
+	cv::Mat* image_ptr;
+public:
 	Solution(); //gjør hele init prosessen
 	Solution(cv::Mat* image_ptr);
 
@@ -30,13 +31,17 @@ public:
 	double* read_fitness() { return fitness; }
 	double read_fitness(int i) const { return fitness[i]; }
 
-	void split(seg_vec_t::iterator seg_it);
+	//void split(seg_vec_t::iterator seg_it);
+	void Solution::split(int seg_index, int n, std::vector<Point>& sepparation_points);
 	void merge(Segment* seg1, std::unordered_set<int>& neighbourIDs);
 	void merge(Segment* seg1, std::vector<Segment*>* segments, std::unordered_set<int>& neighbourIDs);
 
 	//Det vi trenger top nivå:
 	void mutation_merge();
 	void mutation_split();
+
+
+	void testIntegrity();
 };
 
 
@@ -46,3 +51,11 @@ public:
 void find_neighbours(const Segment* seg, std::vector<Segment>* segments, std::unordered_set<int>* neighbourIDs, cv::Mat* image_ptr);
 void find_neighbours(const Segment* seg, std::vector<Segment*>* segments, std::unordered_set<int>* neighbourIDs, cv::Mat* image_ptr);
 
+struct queue_element {
+	Point pnt;
+	int seg_id;
+	double colourDistance;
+	bool operator<(const queue_element& rhs)const {
+		return colourDistance > rhs.colourDistance;
+	}
+};

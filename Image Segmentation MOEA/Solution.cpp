@@ -3,6 +3,7 @@
 #include <iostream>
 #include <stdlib.h>
 #include <time.h>
+#include <queue>
 
 
 using namespace std;
@@ -12,10 +13,10 @@ Solution::Solution() {
 }
 
 //Initializes to one segment per pixel
-Solution::Solution(cv::Mat* image_ptr){
+/*Solution::Solution(cv::Mat* image_ptr){
 	//SPAGHETTI level: low
 	//segments = seg_vec_t(image_ptr->cols*image_ptr->rows);
-	segments.reserve(image_ptr->cols*image_ptr->rows/25);
+	//segments.reserve(image_ptr->cols*image_ptr->rows);
 	this->image_ptr = image_ptr;
 	int x_seg;
 	int y_seg;
@@ -23,19 +24,19 @@ Solution::Solution(cv::Mat* image_ptr){
 	do 
 	{
 		int x_tot = 0;
-		y_seg = ((rand() %( image_ptr->rows / 5)) + y_tot)+1;
-		if (y_seg >= image_ptr->rows) {
-			y_seg = image_ptr->rows - 1;
+		y_seg = ((rand() %( image_ptr->rows / 10)) + y_tot)+1;
+		if (y_seg > image_ptr->rows) {
+			y_seg = image_ptr->rows;
 		}
 		do {
-			x_seg = (rand() %( image_ptr->cols / 5)) + x_tot + 1;
-			if (x_seg >= image_ptr->cols) {
-				x_seg = image_ptr->cols - 1;
+			x_seg = (rand() %( image_ptr->cols / 20)) + x_tot + 1;
+			if (x_seg > image_ptr->cols) {
+				x_seg = image_ptr->cols;
 			}
 			Segment temp_seg(image_ptr);
 			for (int i = x_tot; i < x_seg; i++) {
 				for (int j = y_tot; j < y_seg; j++) {
-					temp_seg.insert_pixel(cv::Point2i(i, j));
+					temp_seg.insert_pixel(Point(i, j));
 				}
 			}
 			segments.push_back(temp_seg);
@@ -47,14 +48,14 @@ Solution::Solution(cv::Mat* image_ptr){
 	y_tot = y_seg;
 
 	} while (y_tot < image_ptr->rows-1);
-	/*	
-	for (int i = 0; i < image_ptr->cols; i++) {
-		for (int j = 0; j < image_ptr->rows; j++) {
-			segments.push_back(Segment(image_ptr, cv::Point2i(i, j)));
-			(segments.end() - 1)->average = image_ptr->ptr<RGB>(j)[i];
-		}
-	}
-	*/
+		
+	//for (int i = 0; i < image_ptr->cols; i++) {
+	//	for (int j = 0; j < image_ptr->rows; j++) {
+	//		segments.push_back(Segment(image_ptr, Point(i, j)));
+	//		(segments.end() - 1)->average = image_ptr->ptr<RGB>(j)[i];
+	//	}
+	//}
+	
 	//Nå har vi ett segment for hver piksel,
 	//Velg en tilfeldig piksel og merge.
 	
@@ -66,9 +67,51 @@ Solution::Solution(cv::Mat* image_ptr){
 		merge(seg,neighbours);
 	}
 	
+}*/
+
+Solution::Solution(cv::Mat* image_ptr) {
+	this->image_ptr = image_ptr;
+	segments.push_back(Segment(image_ptr));
+	for (int i = 0; i < image_ptr->cols; i++) {
+		for (int j = 0; j < image_ptr->rows; j++) {
+			segments[0].points.insert(Point(i, j));
+		}
+	}
+
+	testIntegrity();
+
+	int numStartPoints = (rand() % (INIT_MAX_NUM_SEGMENTS - INIT_MIN_NUN_SEGMENTS)) + INIT_MIN_NUN_SEGMENTS;
+	vector<Point> sepparation_points(numStartPoints);
+	Point current_point;
+	for (auto it = sepparation_points.begin(); it != sepparation_points.end(); ++it) {
+		while (1) {
+			current_point.x = rand() % image_ptr->cols;
+			current_point.y = rand() % image_ptr->rows;
+			if (find(sepparation_points.begin(), sepparation_points.end(), current_point) == sepparation_points.end()) {
+				*it = current_point;
+				break;
+			}
+		}
+	}
+
+	testIntegrity();
+
+	split(0, numStartPoints ,sepparation_points);
 }
+
 const seg_vec_t* Solution::get_segments() {
 	return &segments;
+}
+
+void Solution::testIntegrity() {
+	int points = 0;
+	for (auto it = segments.begin(); it != segments.end(); ++it) {
+		points += it->points.size();
+	}
+
+	if (points != image_ptr->rows*image_ptr->cols) {
+		cout << "FUCK";
+	}
 }
 
 void Solution::calc_fitness() {
@@ -276,14 +319,14 @@ void Solution::merge(Segment* seg1, unordered_set<int>& neighbourIDs) {
 	segments.erase(segments.begin() + *bestNeighbour_it);
 }
 
-void Solution::split(seg_vec_t::iterator seg_it) {
-	/*Splits innto little pieces, combines them uitill there are only two segments*/
+/*void Solution::split(seg_vec_t::iterator seg_it) {
+	//Splits innto little pieces, combines them uitil there are only two segments
 
 
 	//Allokerer vektoren stor nok slik at størelsen alrdi endres,
-	int numPixels = seg_it->points.size();
+	//int numPixels = seg_it->points.size();
 	vector<Segment*> toBeMerged;
-	toBeMerged.reserve(numPixels);
+	//toBeMerged.reserve(numPixels);
 	//Split i enkeltpiksler, skriv ned adressen i to be merged
 	for (auto it = seg_it->points.begin(); it != seg_it->points.end(); ++it) {
 		//legg til pikselen som eget segment
@@ -306,8 +349,61 @@ void Solution::split(seg_vec_t::iterator seg_it) {
 		find_neighbours(current, &toBeMerged, &neighbourIDs, image_ptr);
 		//merge dem
 		//Pass på at ting har beregnet average først
-		merge(current, &toBeMerged,neighbourIDs);
+		merge(current, &toBeMerged, neighbourIDs);
 	}
+}*/
+
+void Solution::split(int seg_index, int n, vector<Point>& sepparation_points) {
+	testIntegrity();
+
+	vector<int> new_segments;
+	//legg de til i hvert sitt segment, fjern fra det originale
+	for (auto it = sepparation_points.begin(); it != sepparation_points.end(); ++it) {
+		segments.push_back(Segment(image_ptr,*it));
+		new_segments.push_back(segments.size()-1);
+		segments[seg_index].points.erase(*it);
+	}
+
+	testIntegrity();
+
+	priority_queue<queue_element> elements;
+	//Finn naboene deres lag queue_element, fyll ut med info, og legg til i priority queue
+	point_vec_t current_neighbours;
+	queue_element current_element;
+	for (int i = 0; i != sepparation_points.size(); ++i) {
+		current_neighbours = neighbours(sepparation_points[i], image_ptr);
+		current_element.seg_id = new_segments[i];
+		for (auto neighbour_it = current_neighbours.begin(); neighbour_it != current_neighbours.end(); ++neighbour_it) {
+			current_element.pnt = *neighbour_it;
+			current_element.colourDistance = color_distance(sepparation_points[i], *neighbour_it, image_ptr);
+			elements.push(current_element);
+		}
+	}
+
+	testIntegrity();
+	//Loop til priority queuen er tom
+		//Slett meg fra det originale settet, om det skjedde så gjør vi resten (altså vi er ikke allerede ekspedert)
+		//sett meg inn i det nye
+		//finn alle naboer, lag queue elementer, fyll ut og putt inn
+	while (elements.size()){
+		if (segments[seg_index].points.erase(elements.top().pnt)) {
+			segments[elements.top().seg_id].points.insert(elements.top().pnt);
+
+			current_neighbours = neighbours(elements.top().pnt, image_ptr);
+			current_element.seg_id = elements.top().seg_id;
+			for (auto neighbour_it = current_neighbours.begin(); neighbour_it != current_neighbours.end(); ++neighbour_it) {
+				current_element.pnt = *neighbour_it;
+				current_element.colourDistance = color_distance(elements.top().pnt, *neighbour_it, image_ptr);
+				elements.push(current_element);
+			}
+		}
+		elements.pop();
+	}
+
+	testIntegrity();
+	//slett det originale settet som nå er tomt.
+	segments.erase(segments.begin()+seg_index);
+	testIntegrity();
 }
 
 
@@ -330,6 +426,19 @@ void Solution::mutation_merge() {
 }
 
 void Solution::mutation_split() {
-	//SPAGHETTI level: low
-	split((segments.begin() + rand() % segments.size()));
+	int seg_index = rand() % segments.size();
+
+	vector<Point> sepparation_points(2);
+	Point current_point;
+	for (auto it = sepparation_points.begin(); it != sepparation_points.end(); ++it) {
+		while (1) {
+			*it = *next(segments[seg_index].points.begin(), rand() % segments[seg_index].points.size());
+			if (find(sepparation_points.begin(), sepparation_points.end(), current_point) == sepparation_points.end()) {
+				sepparation_points.push_back(current_point);
+				break;
+			}
+		}
+	}
+
+	split(seg_index,2,sepparation_points);
 }

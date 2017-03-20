@@ -25,14 +25,15 @@ int main()
 	src = imread(FILENAME, CV_LOAD_IMAGE_COLOR);   // Read the file
 	if (src.size().height < src.size().width) {
 		factor = (255 / ((double)src.size().width));
-		cout << "width: " << factor << endl;
+		//cout << "width: " << factor << endl;
 		resize(src, image, Size(255,src.size().height*factor),0,0,INTER_LINEAR);
 	}
 	else {
 			factor = (255 / ((double)src.size().height));
-			cout << "height: " << factor;
+			//cout << "height: " << factor;
 			resize(src, image, Size(src.size().width*factor,255), 0, 0, INTER_LINEAR);
 	}
+	//image = imread(FILENAME, CV_LOAD_IMAGE_COLOR);   // Read the file
 	/*cout << "Rows: " << image.rows <<  "\nColums " << image.cols << "\nChannels " << image.channels() << endl;
 	cout << "continous? " << image.isContinuous() << endl;
 
@@ -54,7 +55,7 @@ int main()
 	waitKey(0);                                          // Wait for a keystroke in the window
 	*/
 
-	//NSGA_II(&image);
+	NSGA_II(&image);
 
 	/*
 	RGB a(200, 200, 200); // color 1
@@ -63,7 +64,7 @@ int main()
 	*/
 	
 	
-	Solution sol = Solution(&image);
+/*	Solution sol = Solution(&image);
 	seg_vec_t segments = sol.segments;
 	for (seg_vec_t::iterator seg_it = segments.begin(); seg_it != segments.end(); seg_it++) {
 
@@ -79,7 +80,7 @@ int main()
 	namedWindow("Green window", WINDOW_AUTOSIZE);// Create a window for display.
 	imshow("Green window", image);                   // Show our image inside it.
 	waitKey(0);                                          // Wait for a keystroke in the window
-	
+	*/
 	return 0;
 }
 

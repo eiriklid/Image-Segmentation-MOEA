@@ -11,7 +11,7 @@ Segment::Segment() {
 Segment::Segment(cv::Mat* image_ptr) {
 	this->image_ptr = image_ptr;
 }
-Segment::Segment(cv::Mat* image_ptr, cv::Point2i pixel) {
+Segment::Segment(cv::Mat* image_ptr, Point pixel) {
 	this->image_ptr = image_ptr;
 	points.insert(pixel);
 }
@@ -51,17 +51,17 @@ Segment::Segment(cv::Mat* image_ptr, cv::Point2i pixel) {
 
 
 void Segment::insert_pixel(int x, int y) {
-	this->points.insert(cv::Point2i(x, y));
+	this->points.insert(Point(x, y));
 }
-void Segment::insert_pixel(cv::Point2i pixel) {
+void Segment::insert_pixel(Point pixel) {
 	this->points.insert(pixel);
 }
 
 
 bool Segment::erase_pixel(int x, int y) {
-	return this->points.erase(cv::Point2i(x, y));
+	return this->points.erase(Point(x, y));
 }
-bool Segment::erase_pixel(cv::Point2i pixel) {
+bool Segment::erase_pixel(Point pixel) {
 	return this->points.erase(pixel);
 }
 
@@ -167,7 +167,7 @@ double Segment::calc_edge_value() {
 		}
 		
 	}
-	return edge_value = distance;
+	return edge_value = -distance;
 }
 
 double Segment::calc_conectivity_measure() {

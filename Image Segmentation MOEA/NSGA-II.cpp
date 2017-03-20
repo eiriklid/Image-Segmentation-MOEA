@@ -22,7 +22,7 @@ void NSGA_II(cv::Mat* image_ptr) {
 	vector<Individual> poppulation(2 * POPPULATION_SIZE, Individual());
 	
 	//Initialiserer
-	for (auto it = poppulation.begin(); it != poppulation.begin()+POPPULATION_SIZE; ++it) {
+	for (auto it = poppulation.begin(); it != poppulation.end(); ++it) {
 		*it = Individual(image_ptr);
 		it->sol.calc_fitness();
 	}
@@ -30,6 +30,7 @@ void NSGA_II(cv::Mat* image_ptr) {
 	//Beregn rank og diversitet
 	calcRank(poppulation);
 	calcCrowdingDistance(poppulation);
+	sort(poppulation.begin(), poppulation.end());
 
 	//Variabler til loopen
 	Individual* parent1;
@@ -46,6 +47,34 @@ void NSGA_II(cv::Mat* image_ptr) {
 	int read;
 
 	points_set_t edge;
+
+
+	for (int i = 0; i < POPPULATION_SIZE && poppulation[i].rank == poppulation[0].rank; ++i) {
+		cout << endl << i << ") numSeg: " << poppulation[i].sol.segments.size() << "\tO1: " << poppulation[i].sol.read_fitness()[0] << "\tO2: " << poppulation[i].sol.read_fitness()[1] << "\tO3: " << poppulation[i].sol.read_fitness()[2] << endl;
+	}
+
+	cout << "Write index to see solution, negative number to continue\n";
+	cin >> read;
+	if (read < 0) num += -read;
+	else {
+
+		display = image_ptr->clone();
+		for (seg_vec_t::iterator seg_it = poppulation[read].sol.segments.begin(); seg_it != poppulation[read].sol.segments.end(); ++seg_it) {
+			seg_it->get_edge(&edge);
+			for (points_set_t::iterator it = edge.begin(); it != edge.end(); it++) {
+				display.ptr<RGB>((*it).y)[(*it).x] = RGB(0, 255, 0);
+			}
+		}
+		cv::namedWindow("NSGA window", cv::WINDOW_AUTOSIZE);// Create a window for display.
+		cv::imshow("NSGA window", display);                   // Show our image inside it.
+		cv::waitKey(0);
+
+
+	}
+
+	cout << "\n\n\n";
+
+
 
 	while (1) {
 		//Lag barn, plasser fra POPPULATION_SIZE->end
@@ -70,12 +99,12 @@ void NSGA_II(cv::Mat* image_ptr) {
 		//Sorter mhp rank så diversitet.
 		sort(poppulation.begin(), poppulation.end());
 
-		if (count%printRate) {
-			cout << num;
+		if (!(count%printRate)) {
+			cout << count << ' ';
 		}
 		while (count >= num) {
 			for (int i = 0; i < POPPULATION_SIZE && poppulation[i].rank == poppulation[0].rank;++i) {
-				cout << i << ") numSeg: " << poppulation[i].sol.segments.size() << endl;
+				cout <<endl<< i << ") numSeg: " << poppulation[i].sol.segments.size() << "\tO1: " << poppulation[i].sol.read_fitness()[0] << "\tO2: " << poppulation[i].sol.read_fitness()[1] << "\tO3: " << poppulation[i].sol.read_fitness()[2] << endl;
 			}
 			
 			cout << "Write index to see solution, negative number to continue\n";
@@ -83,11 +112,10 @@ void NSGA_II(cv::Mat* image_ptr) {
 			if (read < 0) num += -read;
 			else {
 				
-				display = *image_ptr;
+				display = image_ptr->clone();
 				for (seg_vec_t::iterator seg_it = poppulation[read].sol.segments.begin(); seg_it != poppulation[read].sol.segments.end(); ++seg_it) {
 					seg_it->get_edge(&edge);
 					for (points_set_t::iterator it = edge.begin(); it != edge.end(); it++) {
-						cout << *it << endl;
 						display.ptr<RGB>((*it).y)[(*it).x] = RGB(0, 255, 0);
 					}
 				}
@@ -160,7 +188,7 @@ void crossover(const Individual* parent1, const Individual* parent2, Individual*
 	//Utvikl noen tester for å se om den ble delt, sett isChanged om det er ett problem
 	//For alle segmenter som ble endret
 	//TODO er dette rett??
-	cv::Point2i currentPoint;
+	Point currentPoint;
 	vector<Segment>::iterator newSegment;
 	point_vec_t unhandled_neighbours;
 	point_vec_t current_neighbours;
@@ -289,7 +317,7 @@ void calcCrowdingDistance(vector<Individual>& poppulation) {
 
 		for (int objFunc = 0; objFunc < NUM_OBJECTIVES; ++objFunc) {
 			//sorter [rankStart, rankEnd> mhp hver av fitness funksjonene
-			sort(poppulation.begin() + rankStart, poppulation.end() + rankEnd, sortArray[objFunc]);
+			sort(poppulation.begin() + rankStart, poppulation.begin() + rankEnd, sortArray[objFunc]);
 			//Setter ytterpunktene i denne dimmensjonen til å ha uendelig crowdingDistance 
 			poppulation[rankStart].crowdingDistance = INFINITY;
 			poppulation[rankEnd - 1].crowdingDistance = INFINITY;

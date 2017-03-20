@@ -5,14 +5,14 @@
 #include "pixel_functions.h"
 
 namespace std {
-	template<> struct hash<cv::Point> {
-		size_t operator()(const cv::Point &pt) const {
-			return std::hash<int>()(pt.x) ^ std::hash<int>()(pt.y);
+	template<> struct hash<Point> {
+		size_t operator()(const Point &pt) const {
+			return std::hash<uchar>()(pt.x) ^ std::hash<uchar>()(pt.y);
 		}
 	};
 }
 
-typedef std::unordered_set <cv::Point2i> points_set_t;
+typedef std::unordered_set <Point> points_set_t;
 
 class Segment
 {
@@ -31,7 +31,7 @@ public:
 
 	Segment(); //For allocation only
 	Segment(cv::Mat* image_ptr);
-	Segment(cv::Mat* image_ptr, cv::Point2i pixel);
+	Segment(cv::Mat* image_ptr, Point pixel);
 	//segment(Segment a, Segment b);
 	//Segment(cv::Mat* image_ptr, Segment a, Segment b);
 
@@ -39,9 +39,9 @@ public:
 	RGB read_average() { return average; }
 	//~Segment();
 	void insert_pixel(int x, int y);
-	void insert_pixel(cv::Point2i pixel);
+	void insert_pixel(Point pixel);
 	bool erase_pixel(int x, int y); 
-	bool erase_pixel(cv::Point2i pixel);
+	bool erase_pixel(Point pixel);
 	void print();
 	points_set_t* get_points();
 	cv::Mat* get_image_ptr();
