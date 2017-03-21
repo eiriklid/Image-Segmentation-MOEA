@@ -404,6 +404,7 @@ void Solution::split(int seg_index, int n, vector<Point>& sepparation_points) {
 		}
 		elements.pop();
 	}
+
 	cout << endl<<slettet<< " " << lagttil<< endl;
 	int lagtTil = 0;
 	auto bestSegment = segments.begin();
@@ -457,7 +458,21 @@ void Solution::mutation_split() {
 	Point current_point;
 	for (auto it = sepparation_points.begin(); it != sepparation_points.end(); ++it) {
 		while (1) {
-			*it = *next(segments[seg_index].points.begin(), rand() % segments[seg_index].points.size());
+			current_point.x = rand() % image_ptr->cols;
+			current_point.y = rand() % image_ptr->rows;
+
+			if (find(segments[seg_index].points.begin(), segments[seg_index].points.begin(), current_point) == segments[seg_index].points.end()) {
+				//Elementet finnes ikke fra før.
+				//da setter vi det inn, setter current_point til å være punktet etter
+				//som blir ett helt tilfeldig punk pga hash
+				//så sletter vi den vi satt inn igjen
+				auto newPoint  = segments[seg_index].points.insert(current_point);
+				newPoint.first++;
+				current_point = *(newPoint.first);
+				newPoint.first--;
+				segments[seg_index].points.erase(*newPoint.first);
+			}
+
 			if (find(sepparation_points.begin(), sepparation_points.end(), current_point) == sepparation_points.end()) {
 				sepparation_points.push_back(current_point);
 				break;
