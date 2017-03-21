@@ -18,8 +18,9 @@ private:
 public:
 	Solution(); //gjør hele init prosessen
 	Solution(cv::Mat* image_ptr);
-
+	Solution(cv::Mat* image_ptr,double f1, double f2, double f3);
 	const seg_vec_t* get_segments();
+	cv::Mat* get_image_ptr() { return image_ptr; }
 
 	//void merge_with_all_neighbours(Segment* seg);
 
@@ -28,11 +29,11 @@ public:
 	//void Solution::mergeSegments(seg_vec_t::iterator seg1, seg_vec_t::iterator seg2);
 
 	void calc_fitness();
-	double* read_fitness() { return fitness; }
+	double* read_fitness(){ return fitness; }
 	double read_fitness(int i) const { return fitness[i]; }
 
 	//void split(seg_vec_t::iterator seg_it);
-	void Solution::split(int seg_index, int n, std::vector<Point>& sepparation_points);
+	void split(int seg_index, int n, std::vector<Point>& sepparation_points);
 	void merge(Segment* seg1, std::unordered_set<int>& neighbourIDs);
 	void merge(Segment* seg1, std::vector<Segment*>* segments, std::unordered_set<int>& neighbourIDs);
 

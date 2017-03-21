@@ -98,12 +98,19 @@ Solution::Solution(cv::Mat* image_ptr) {
 
 	split(0, numStartPoints ,sepparation_points);
 }
+Solution::Solution(cv::Mat* image_ptr, double f1, double f2, double f3) {
+	this->image_ptr = image_ptr;
+	fitness[0] = f1;
+	fitness[1] = f2;
+	fitness[2] = f3;
+}
 
 const seg_vec_t* Solution::get_segments() {
 	return &segments;
 }
 
 void Solution::testIntegrity() {
+	return;
 	int points = 0;
 	for (auto it = segments.begin(); it != segments.end(); ++it) {
 		points += it->points.size();
@@ -117,12 +124,12 @@ void Solution::testIntegrity() {
 void Solution::calc_fitness() {
 	fitness[0] = 0;
 	fitness[1] = 0;
-	fitness[2] = 1;
+	fitness[2] = 0;
 
 	for (auto it = segments.begin(); it != segments.end(); ++it) {
-		fitness[0] += it->calc_conectivity_measure();
+		fitness[0] += it->calc_overall_deviation();
 		fitness[1] += it->calc_edge_value();
-		fitness[2] += it->calc_overall_deviation();
+		fitness[2] += it->calc_conectivity_measure();
 	}
 }
 
@@ -441,7 +448,20 @@ void Solution::split(int seg_index, int n, vector<Point>& sepparation_points) {
 void Solution::mutation_merge() {
 	//SPAGHETTI level: low
 	//velg en tilfeldig
-	Segment* seg1 = &*(segments.begin()+rand()%segments.size());
+	Segment* seg1 = &*segments.begin();
+	int smallest = INT_MAX;
+	if (MUTATION_MERGE_SMALLEST_SEGMENT_RATE && !(rand() % MUTATION_MERGE_SMALLEST_SEGMENT_RATE)) {
+		for (auto it = segments.begin(); it != segments.end(); ++it) {
+			if (it->points.size() < smallest) {
+				seg1 = &*it;
+				smallest = it->points.size();
+			}
+		}
+	}
+	else {
+		seg1 = &*(segments.begin() + rand() % segments.size());
+	}
+	
 
 	//merg den med den beste naboen
 	unordered_set<int> neighbourIDs;
@@ -458,21 +478,29 @@ void Solution::mutation_merge() {
 void Solution::mutation_split() {
 	int seg_index = rand() % segments.size();
 
-	vector<Point> sepparation_points(2);
+	if (segments[seg_index].points.size() < 2) return;
+
+	vector<Point> sepparation_points;
 	Point current_point;
-	for (auto it = sepparation_points.begin(); it != sepparation_points.end(); ++it) {
+	for (int i = 0; i < 2; ++i) {
 		while (1) {
 			current_point.x = rand() % image_ptr->cols;
 			current_point.y = rand() % image_ptr->rows;
 
-			if (find(segments[seg_index].points.begin(), segments[seg_index].points.begin(), current_point) == segments[seg_index].points.end()) {
+			if (find(segments[seg_index].points.begin(), segments[seg_index].points.end(), current_point) == segments[seg_index].points.end()) {
 				//Elementet finnes ikke fra før.
 				//da setter vi det inn, setter current_point til å være punktet etter
 				//som blir ett helt tilfeldig punk pga hash
 				//så sletter vi den vi satt inn igjen
 				auto newPoint  = segments[seg_index].points.insert(current_point);
 				newPoint.first++;
-				current_point = *(newPoint.first);
+				if (newPoint.first == segments[seg_index].points.end()) {
+					current_point = *(segments[seg_index].points.begin());
+				}
+				else
+				{
+					current_point = *(newPoint.first);
+				}
 				newPoint.first--;
 				segments[seg_index].points.erase(*newPoint.first);
 			}
