@@ -113,15 +113,21 @@ int display(vector<Individual>& poppulation, cv::Mat* image_ptr) {
 	else {
 
 		cv::Mat disp = image_ptr->clone();
+		cv::Mat bw_disp = image_ptr->clone();
+		bw_disp = cv::Scalar(255, 255, 255);
 		for (seg_vec_t::iterator seg_it = poppulation[read].sol.segments.begin(); seg_it != poppulation[read].sol.segments.end(); ++seg_it) {
 			seg_it->get_edge(&edge);
 			for (points_set_t::iterator it = edge.begin(); it != edge.end(); it++) {
 				disp.ptr<RGB>((*it).y)[(*it).x] = RGB(0, 255, 0);
+				bw_disp.ptr<RGB>((*it).y)[(*it).x] = RGB(0, 0, 0);
 			}
 		}
 		cv::namedWindow("NSGA window", cv::WINDOW_AUTOSIZE);// Create a window for display.
 		cv::imshow("NSGA window", disp);                   // Show our image inside it.
+		cv::namedWindow("NSGA BW window", cv::WINDOW_AUTOSIZE);// Create a window for display.
+		cv::imshow("NSGA BW window", bw_disp);
 		cv::waitKey(0);
+
 	}
 	return 0;
 }
