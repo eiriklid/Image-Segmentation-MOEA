@@ -5,6 +5,7 @@
 #include "Segment.h"
 #include "pixel_functions.h"
 #include <Algorithm>
+#include "Parameters.h"
 
 typedef std::vector <Segment> seg_vec_t;
 //typedef std::vector <int> index_vec_t;
@@ -31,6 +32,7 @@ public:
 	void calc_fitness();
 	double* read_fitness(){ return fitness; }
 	double read_fitness(int i) const { return fitness[i]; }
+	double read_fitness_id(int i);
 
 	//void split(seg_vec_t::iterator seg_it);
 	void split(int seg_index, int n, std::vector<Point>& sepparation_points);

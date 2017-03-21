@@ -99,7 +99,11 @@ int display(vector<Individual>& poppulation, cv::Mat* image_ptr) {
 	cout << "Highest rank: " << (poppulation.end() - 1)->rank << endl;
 	
 	for (int i = 0; i < POPPULATION_SIZE && poppulation[i].rank == poppulation[0].rank; ++i) {
-		cout << endl << i << ") numSeg: " << poppulation[i].sol.segments.size() << "\tCD: " << poppulation[i].crowdingDistance <<"\tO1: " << poppulation[i].sol.read_fitness()[0] << "\tO2: " << poppulation[i].sol.read_fitness()[1] << "\tO3: " << poppulation[i].sol.read_fitness()[2] << endl;
+		cout << endl << i << ") numSeg: " << poppulation[i].sol.segments.size() << "\tCD: " << poppulation[i].crowdingDistance;
+		if(USE_OVERALL_DEVIATION) cout << "\tOD: " << poppulation[i].sol.read_fitness()[0];
+		if(USE_EDGE_VALUE) cout << "\tEV: " << poppulation[i].sol.read_fitness()[1];
+		if(USE_CONNECTIVITY_MEASURE) cout << "\tCM: " << poppulation[i].sol.read_fitness()[2];
+		cout << endl;
 	}
 
 	cout << "Write index to see solution, negative number to continue\n";
@@ -160,12 +164,12 @@ void crossover(const Individual* parent1, const Individual* parent2, Individual*
 
 	//Sorter segmentene hos barnet etter etellerannet
 	typedef bool(*sortFunc)(const Segment&, const Segment&);
-	sortFunc sortArray[3];
-	sortArray[0] = &sortSegmentsOnFitness1;
-	sortArray[1] = &sortSegmentsOnFitness2;
-	sortArray[2] = &sortSegmentsOnFitness3;
+	vector<sortFunc> sortArray;
+	if (USE_OVERALL_DEVIATION) sortArray.push_back(&sortSegmentsOnFitness1);
+	if (USE_EDGE_VALUE) sortArray.push_back(&sortSegmentsOnFitness2);
+	if (USE_CONNECTIVITY_MEASURE) sortArray.push_back(&sortSegmentsOnFitness3);
 
-	sort(child->sol.segments.begin(), child->sol.segments.end(), sortArray[rand()%3]);
+	sort(child->sol.segments.begin(), child->sol.segments.end(), sortArray[rand()%sortArray.size()]);
 	//sort(child->sol.segments.begin(), child->sol.segments.end(), sortArray[0]);
 
 	//Itterer gjennom alle segmentene i
@@ -271,14 +275,14 @@ void calcRank(vector<Individual>& poppulation) {
 		//Find all dominating individuals
 		for (int j = 0; j < poppulation.size(); ++j) {
 			if (i != j && poppulation[j].rank != INT_MAX) {
-				if ((poppulation[j].sol.read_fitness(0) == poppulation[i].sol.read_fitness(0))
-					&& (poppulation[j].sol.read_fitness(1) == poppulation[i].sol.read_fitness(1))
-					&& (poppulation[j].sol.read_fitness(2) == poppulation[i].sol.read_fitness(2))) {
+				if ((!USE_OVERALL_DEVIATION || poppulation[j].sol.read_fitness(0) == poppulation[i].sol.read_fitness(0))
+					&& (!USE_EDGE_VALUE ||poppulation[j].sol.read_fitness(1) == poppulation[i].sol.read_fitness(1))
+					&& (!USE_CONNECTIVITY_MEASURE || poppulation[j].sol.read_fitness(2) == poppulation[i].sol.read_fitness(2))) {
 					poppulation[j].rank = INT_MAX;
 				}
-				else if ((poppulation[j].sol.read_fitness(0) < poppulation[i].sol.read_fitness(0))
-					&& (poppulation[j].sol.read_fitness(1) < poppulation[i].sol.read_fitness(1))
-					&& (poppulation[j].sol.read_fitness(2) < poppulation[i].sol.read_fitness(2)) ) {
+				else if ((!USE_OVERALL_DEVIATION || poppulation[j].sol.read_fitness(0) < poppulation[i].sol.read_fitness(0))
+					&& (!USE_EDGE_VALUE || poppulation[j].sol.read_fitness(1) < poppulation[i].sol.read_fitness(1))
+					&& (!USE_CONNECTIVITY_MEASURE || poppulation[j].sol.read_fitness(2) < poppulation[i].sol.read_fitness(2)) ) {
 					poppulation[i].domminatingSolutionIDs.push_back(j);
 				}
 			}
@@ -324,10 +328,10 @@ void calcCrowdingDistance(vector<Individual>& poppulation) {
 	double f_min;
 	double f_max;
 	typedef bool(*sortFunc)(const Individual&, const Individual&);
-	sortFunc sortArray[3];
-	sortArray[0] = &sortOnFitness1;
-	sortArray[1] = &sortOnFitness2;
-	sortArray[2] = &sortOnFitness3;
+	vector<sortFunc> sortArray;
+	if(USE_OVERALL_DEVIATION) sortArray.push_back(&sortOnFitness1);
+	if(USE_EDGE_VALUE) sortArray.push_back(&sortOnFitness2);
+	if(USE_CONNECTIVITY_MEASURE) sortArray.push_back(&sortOnFitness3);
 	for (int rankStart = 0; rankStart < poppulation.size();) {
 		//find rank end
 		while (rankEnd != poppulation.size() && poppulation[rankEnd].rank == poppulation[rankStart].rank) {
@@ -335,24 +339,34 @@ void calcCrowdingDistance(vector<Individual>& poppulation) {
 		}
 
 
-		for (int objFunc = 0; objFunc < NUM_OBJECTIVES; ++objFunc) {
+		for (int objFunc = 0; objFunc < sortArray.size(); ++objFunc) {
 			//sorter [rankStart, rankEnd> mhp hver av fitness funksjonene
 			sort(poppulation.begin() + rankStart, poppulation.begin() + rankEnd, sortArray[objFunc]);
 			//Setter ytterpunktene i denne dimmensjonen til å ha uendelig crowdingDistance 
 			poppulation[rankStart].crowdingDistance = INFINITY;
 			poppulation[rankEnd - 1].crowdingDistance = INFINITY;
-			f_min = poppulation[rankStart].sol.read_fitness(objFunc);
-			f_max = poppulation[rankEnd - 1].sol.read_fitness(objFunc);
+			f_min = poppulation[rankStart].sol.read_fitness_id(objFunc);
+			f_max = poppulation[rankEnd - 1].sol.read_fitness_id(objFunc);
 
 			if (rankStart + 1 < rankEnd - 1) {
 				//mer enn 2 elementer
 				for (auto it = poppulation.begin() + rankStart + 1; it != poppulation.begin() + rankEnd - 1; ++it) {
-					it->crowdingDistance += ((it + 1)->sol.read_fitness(objFunc) - (it - 1)->sol.read_fitness(objFunc)) / (f_max - f_min);
+					it->crowdingDistance += ((it + 1)->sol.read_fitness_id(objFunc) - (it - 1)->sol.read_fitness_id(objFunc)) / (f_max - f_min);
 				}
 			}
 		}
 		rankStart = rankEnd;
 	}
+}
+
+double Solution::read_fitness_id(int id) {
+	if (!USE_OVERALL_DEVIATION) {
+		return read_fitness(id + 1);
+	}
+	else if (!USE_EDGE_VALUE && id==1) {
+		return read_fitness(2);
+	}
+	return read_fitness(id);
 }
 
 bool sortOnFitness1(const Individual& lhs, const Individual& rhs) {
