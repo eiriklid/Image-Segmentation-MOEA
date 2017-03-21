@@ -388,24 +388,28 @@ void Solution::split(int seg_index, int n, vector<Point>& sepparation_points) {
 	int slettet= sepparation_points.size();
 	int lagttil = 0;
 
-	while (elements.size()){
-		if (segments[seg_index].points.erase(elements.top().pnt)) {
-			slettet++;
-			segments[elements.top().seg_id].points.insert(elements.top().pnt);
+	queue_element top_element;
+	queue_element new_element;
 
-			current_neighbours = neighbours(elements.top().pnt, image_ptr);
-			current_element.seg_id = elements.top().seg_id;
+	while (elements.size()){
+		top_element = elements.top();
+		elements.pop();
+		if (segments[seg_index].points.erase(top_element.pnt)) {
+			slettet++;
+			segments[top_element.seg_id].points.insert(top_element.pnt);
+
+			current_neighbours = neighbours(top_element.pnt, image_ptr);
+			new_element.seg_id = top_element.seg_id;
 			for (auto neighbour_it = current_neighbours.begin(); neighbour_it != current_neighbours.end(); ++neighbour_it) {
 				lagttil++;
-				current_element.pnt = *neighbour_it;
-				current_element.colourDistance = color_distance(elements.top().pnt, *neighbour_it, image_ptr);
-				elements.push(current_element);
+				new_element.pnt = *neighbour_it;
+				new_element.colourDistance = color_distance(top_element.pnt, *neighbour_it, image_ptr);
+				elements.push(new_element);
 			}
 		}
-		elements.pop();
 	}
 
-	cout << endl<<slettet<< " " << lagttil<< endl;
+	/*cout << endl<<slettet<< " " << lagttil<< endl;
 	int lagtTil = 0;
 	auto bestSegment = segments.begin();
 	bool doBreak;
@@ -425,7 +429,7 @@ void Solution::split(int seg_index, int n, vector<Point>& sepparation_points) {
 			cout << "Dette var ikke bra\n";
 		}
 	}
-	cout << "Lagt til: " << lagtTil << endl;
+	cout << "Lagt til: " << lagtTil << endl;*/
 
 	//slett det originale settet som nå er tomt.
 	segments.erase(segments.begin()+seg_index);
