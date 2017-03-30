@@ -1,6 +1,5 @@
-# Image-Segmentation-MOEA
+# Image-Segmentation-MOEA IT3708 Project 3
 
-IT3708 Project 3
 Sufficient to get full score for segmentations.  
 
 
