@@ -25,7 +25,7 @@ TODO:
 		- [x] Check for conectivity
 	- [x] Split
 - [x] Crossover
-	- [?] sort segment from best to worse
+	- [x] sort segment from best to worse
 	- [?] Fix "broken" segments
 - [x] Fitness for Solution
 	- [x] overall deviation
