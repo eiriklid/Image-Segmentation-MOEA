@@ -2,6 +2,6 @@
 
 
 
-Segment merge(Segment a, Segment b) {
+/*Segment merge(Segment a, Segment b) {
 		return Segment(a.get_image_ptr(),a,b);	
-}
+}*/

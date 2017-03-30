@@ -6,6 +6,7 @@ Genotype:
 	
 Crossover:
 	- Sorter alle segmentene hos de to foreldrene utifra fitness.
+		! Har nå valg tå sortere ettere en tilfeldig fitness funk
 	- Velg den beste, slett pixlene i den fra de etterfølgende segmentene.
 	- Gjennta for neste segment.
 	- For hvert segment som er endret (marker om de ble endret)

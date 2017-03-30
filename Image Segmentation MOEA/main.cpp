@@ -4,82 +4,83 @@
 
 #include <iostream>
 #include <unordered_set>
+#include <string>
 
 #include "Segment.h"
 #include "pixel_functions.h"
 #include "Solution.h"
+#include "NSGA_II.h"
 
 using namespace cv;
 using namespace std;
 
-
-
-
-int main(int argc, char** argv)
+int main()
 {
-	if (argc != 2)
-	{
-		cout << " Usage: display_image ImageToLoadAndDisplay" << endl;
-		return -1;
-	}
-
+	srand(time(NULL));
+	Mat src;
+	
 	Mat image;
-	image = imread(argv[1], CV_LOAD_IMAGE_COLOR);   // Read the file
+	double factor = 0;
+	
+	src = imread(FILENAME, CV_LOAD_IMAGE_COLOR);   // Read the file
+	if (src.size().height < src.size().width) {
+		factor = (255 / ((double)src.size().width));
+		//cout << "width: " << factor << endl;
+		resize(src, image, Size(255,src.size().height*factor),0,0,INTER_LINEAR);
+	}
+	else {
+			factor = (255 / ((double)src.size().height));
+			//cout << "height: " << factor;
+			resize(src, image, Size(src.size().width*factor,255), 0, 0, INTER_LINEAR);
+	}
+	//image = imread(FILENAME, CV_LOAD_IMAGE_COLOR);   // Read the file
+	/*cout << "Rows: " << image.rows <<  "\nColums " << image.cols << "\nChannels " << image.channels() << endl;
+	cout << "continous? " << image.isContinuous() << endl;
+
+	uchar* imagePtr = image.ptr<uchar>(0);
+	cout << (int)*(imagePtr + image.rows*image.cols*image.channels()-1);
+	
+	system("PAUSE");*/
+
+
 
 	if (!image.data)                              // Check for invalid input
 	{
 		cout << "Could not open or find the image" << std::endl;
 		return -1;
 	}
-
+	/*
 	namedWindow("Display window", WINDOW_AUTOSIZE);// Create a window for display.
 	imshow("Display window", image);                   // Show our image inside it.
+	waitKey(0);                                          // Wait for a keystroke in the window
+	*/
 
-	Solution sol = Solution(&image);
+	NSGA_II(&image);
+
 	/*
-	cv::Vec3d a(200, 200, 200); // color 1
-	cv::Vec3d b(100, 100, 100); // color 2
+	RGB a(200, 200, 200); // color 1
+	RGB b(100, 100, 100); // color 2
 	cout << color_distance(a, b) << endl;
 	*/
-	/*
-	Segment a_seg(&image);
-	Segment b_seg(&image);
+	
+	
+/*	Solution sol = Solution(&image);
+	seg_vec_t segments = sol.segments;
+	for (seg_vec_t::iterator seg_it = segments.begin(); seg_it != segments.end(); seg_it++) {
 
-	for (int i = 0; i < 30; i++) {
-		for (int j = 0; j < 32; j++) {
-			a_seg.insert_pixel(Point2i(i, j));
-			b_seg.insert_pixel(Point2i(i + 31, j));
+		points_set_t edge;
+		seg_it->get_edge(&edge);
+		for (points_set_t::const_iterator it = edge.begin(); it != edge.end(); it++) {
+			//cout << *it << endl;
+			image.at<Vec3b>(*it)[0] = 0;
+			image.at<Vec3b>(*it)[1] = 255;
+			image.at<Vec3b>(*it)[2] = 0;
 		}
 	}
-	cout << a_seg.neighbour(b_seg);
-	Segment test_seg(&image, a_seg, b_seg);
-	//cout << test_seg.average();
-	//test_seg.print();
-	/*
-	Point2i p = Point2i(0, 0);
-	point_vec_t neighbour_vec = neighbours(p, &image,1);
-
-	for (point_vec_t::iterator it = neighbour_vec.begin(); it != neighbour_vec.end(); it++) {
-		cout << *it << endl;
-	}
-	
-	//cout << test_seg.overall_deviation();
-	//cout << test_seg.conectivity_measure();
-
-	points_set_t edge = test_seg.get_edge();
-	for (points_set_t::const_iterator it = edge.begin(); it != edge.end(); it++) {
-		//cout << *it << endl;
-		image.at<Vec3b>(*it)[0] = 0;
-		image.at<Vec3b>(*it)[1] = 255;
-		image.at<Vec3b>(*it)[2] = 0;
-	}
-	*/
-	 
-
 	namedWindow("Green window", WINDOW_AUTOSIZE);// Create a window for display.
 	imshow("Green window", image);                   // Show our image inside it.
-	
 	waitKey(0);                                          // Wait for a keystroke in the window
+	*/
 	return 0;
 }
 
